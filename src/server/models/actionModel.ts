@@ -1,7 +1,7 @@
 import { Message } from "./message";
 import { ParsableModels } from "./parsableModels";
 
-interface ActionInterface {
+export interface ActionInterface {
     modelName: string;
 }
 

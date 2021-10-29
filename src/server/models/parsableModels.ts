@@ -8,4 +8,8 @@ export abstract class ParsableModels {
     constructor(objectType: string) {
         this.model = objectType;
     }
+
+    getType() {
+        return this.model;
+    }
 }

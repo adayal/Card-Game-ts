@@ -1,7 +1,7 @@
 interface MessageInterface {
     commandName: string;
     objectType: string;
-    objectData: JSON;
+    objectData: any;
     properties: string[];
 }
 
@@ -9,7 +9,7 @@ export class Message implements MessageInterface {
     
     commandName: string;
     objectType: string;
-    objectData: JSON;
+    objectData: any;
     properties: string[];
     
     
