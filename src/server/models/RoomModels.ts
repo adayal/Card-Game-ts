@@ -29,16 +29,57 @@ export class CreateRoomModel extends ParsableModels implements ActionInterface {
     }
 
     isValidModel(message: Message) {
+      let isValid = true;
       if (message.objectType != this.modelName) {
         return false;
       }
-
+  
       this.properties.forEach(prop => {
         if (!message.objectData.hasOwnProperty(prop)) {
-          return false;
+          isValid = false;
         }
-      })
-
-      return true;
+      });
+  
+      return isValid;
     }
+}
+
+export class JoinRoomModel extends ParsableModels implements ActionModel {
+  
+  modelName = 'JoinRoomModel';
+  properties: string[];
+  roomName: string;
+  password: string;
+
+  constructor() {
+    super(JoinRoomModel.name);
+    this.properties = ['roomName', 'password'];
+  }
+
+  parse(message: Message) {
+    if (!this.isValidModel(message)) {
+      throw new Error("Malformed " + this.modelName);
+    }
+    this.roomName = message.objectData.roomName;
+    this.password = message.objectData.password;
+
+    return this;
+  }
+
+  isValidModel(message: Message) {
+    let isValid = true;
+    if (message.objectType != this.modelName) {
+      return false;
+    }
+
+    this.properties.forEach(prop => {
+      if (!message.objectData.hasOwnProperty(prop)) {
+        isValid = false;
+      }
+    });
+
+    return isValid;
+  }
+
+
 }

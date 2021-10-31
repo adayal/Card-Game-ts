@@ -1,41 +1,45 @@
-import { CreateRoomModel } from "../models/createRoomModel";
+import { CreateRoomModel, JoinRoomModel } from "../models/RoomModels";
+import { Room } from "./room";
 
 export class RoomManager {
 
-  sockets: any[];
-  roomName: string;
-  players: any[]; // change to type player obj
-  gameName: string;
-  password: string;
-  hasGameStarted: boolean;
-  game: any; // change to type game obj
+  rooms: Room[];
 
-  constructor(createRoomModel: CreateRoomModel, newPlayer: any) {
-    this.roomName = createRoomModel.roomName;
-    this.gameName = createRoomModel.gameName;
-    this.password = createRoomModel.password;
-    this.sockets = [];
-    this.players = [];
-    
-    this.sockets.push(newPlayer);
+  constructor() {
+    this.rooms = [];
   }
 
-  existsInRoom(searchSocket: any) {
-    let exists = false;
-    this.sockets.forEach(socket => {
-      if (socket.id == searchSocket.id) {
-        exists = true;
+  createRoom(createRoomModel: CreateRoomModel, newPlayer: any): boolean {
+    let existingRoom = this.getRoomBySocket(newPlayer);
+    if (existingRoom) return false;
+    this.rooms.push(new Room(createRoomModel, newPlayer));
+    return true;
+  }
+
+  getRoomBySocket(searchSocket: any): any {
+    let foundRoom = null;
+    this.rooms.forEach(room => {
+      if (room.existsInRoom(searchSocket)) {
+        foundRoom = room;
       }
     });
-    return exists;
+    return foundRoom;
   }
 
-  joinRoom(socket: any) {
+  joinRoom(joinRoomModel: JoinRoomModel, newPlayer: any): boolean {
+    let joinRoom = false;
+    let alreadyInRoom = this.getRoomBySocket(newPlayer);
+    if (alreadyInRoom) {
+      return joinRoom;
+    }
 
+    this.rooms.forEach(room => {
+      if (room.roomName == joinRoomModel.roomName && 
+        room.password == joinRoomModel.password && 
+        !room.hasGameStarted) {
+          joinRoom = room.joinRoom(newPlayer);
+      }
+    })
+    return joinRoom;
   }
-
-  exitRoom(socket: any) {
-
-  }
-
 }

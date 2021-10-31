@@ -3,9 +3,10 @@ import cors from "cors";
 import * as http from "http";
 import { Message } from "./models/message";
 import { Parser } from "./parser/parser";
-import { CreateRoomModel } from "./models/createRoomModel";
+import { CreateRoomModel, JoinRoomModel } from "./models/RoomModels";
 import CONSTANTS from "../common/CONSTANTS";
 import { RoomManager } from "./room/roomManager";
+import { StartGameModel } from "./models/gameModel";
 
 export class Server {
   public static readonly PORT:number = 3000; //config file
@@ -14,7 +15,7 @@ export class Server {
   private io: any;
   private port: string | number;
   private parser: Parser;
-  private rooms: RoomManager[];
+  private roomManager: RoomManager;
 
 
   constructor() {
@@ -24,7 +25,7 @@ export class Server {
     this.sockets();
     this.listen();
     this.parser = new Parser();
-    this.rooms = [];
+    this.roomManager = new RoomManager();
   }
   
   private createApp(): void {
@@ -64,36 +65,29 @@ export class Server {
 
   private handleMessage(msg: any, socket: any): any{
     try {
+      let selectedRoom = this.roomManager.getRoomBySocket(socket);
       let parsedMessage = this.parser.parseMessage(new Message(msg));
       if (parsedMessage.getType() == CreateRoomModel.name) {
-        if (!this.createRoom(parsedMessage as CreateRoomModel, socket)) {
+        if (!this.roomManager.createRoom(parsedMessage as CreateRoomModel, socket)) {
           socket.emit(CONSTANTS.MSG_TYPES.ALREADY_JOINED_ROOM);
         }
+      }
+      else if (parsedMessage.getType() == JoinRoomModel.name) {
+        if (!this.roomManager.joinRoom(parsedMessage as JoinRoomModel, socket)) {
+          socket.emit(CONSTANTS.MSG_TYPES.ROOM_NOT_JOINED);
+        }
+      }
+      else if (parsedMessage.getType() == StartGameModel.name) {
+        if (!selectedRoom || selectedRoom.hasGameStarted) {
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+        }
+        selectedRoom.startGame();
       }
       socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
     } catch (e) {
       console.log(e);
       socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
     }
-  }
-
-  private createRoom(createRoomMsg: CreateRoomModel, socket: any): boolean{
-    if (this.existsInRoom(socket)) {
-      return false;
-    }
-    console.log("creating room");
-    this.rooms.push(new RoomManager(createRoomMsg, socket));
-    return true;
-  }
-
-  private existsInRoom(socket: any): any{
-    let exists = false;
-    this.rooms.forEach(room => {
-      if (room.existsInRoom(socket)) {
-        exists = true;
-      }
-    });
-    return exists;
   }
 
   public getApp(): express.Application {
