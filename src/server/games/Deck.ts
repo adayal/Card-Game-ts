@@ -34,7 +34,7 @@ export class Deck {
   }
 
   public discardCard(card: Card) {
-    if (this._)
+
   }
 
   public isCardInDeck(card: Card): boolean{
@@ -45,7 +45,7 @@ export class Deck {
         return;
       }
     });
-    return foundCard;
+    return foundCard != null;
   }
 
   public resetDeck() {

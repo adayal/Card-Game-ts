@@ -2,7 +2,6 @@ interface MessageInterface {
     commandName: string;
     objectType: string;
     objectData: any;
-    properties: string[];
 }
 
 export class Message implements MessageInterface {
@@ -10,12 +9,10 @@ export class Message implements MessageInterface {
     commandName: string;
     objectType: string;
     objectData: any;
-    properties: string[];
+    static properties: ['commandName', 'objectType', 'objectData', 'socket'];
     
     
     constructor(message: any) {
-        this.properties = ['commandName', 'objectType', 'objectData', 'socket'];
-        
         if (this.isValidMessage(message)) {
             this.commandName = message.commandName;
             this.objectType = message.objectType;
@@ -26,7 +23,7 @@ export class Message implements MessageInterface {
     }
     
     isValidMessage(message: JSON) {
-        this.properties.forEach(prop => {
+        Message.properties.forEach(prop => {
             if (!message.hasOwnProperty(prop)) {
                 return false;
             }

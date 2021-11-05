@@ -6,80 +6,46 @@ import { ActionInterface } from './actionModel';
 export class CreateRoomModel extends ParsableModels implements ActionInterface {
         
     modelName = 'CreateRoomModel';
-    properties: string[];
+    static properties: ['roomName', 'gameName', 'password'];
     roomName: string;
     gameName: string;
     password: string;
+    playerName: string;
 
     constructor() {
-        super(CreateRoomModel.name);
-        this.properties = ['roomName', 'gameName', 'password'];
+        super(CreateRoomModel.name, CreateRoomModel.properties);
     }
 
     parse(message: Message) {
-      if (!this.isValidModel(message)) {
-        throw new Error("Malformed " + this.modelName);
-      }
-
+      this.isValidModel(message);
       this.roomName = message.objectData.roomName;
       this.gameName = message.objectData.gameName;
       this.password = message.objectData.password;
+      this.playerName = message.objectData.playerName;
       
       return this;
     }
-
-    isValidModel(message: Message) {
-      let isValid = true;
-      if (message.objectType != this.modelName) {
-        return false;
-      }
-  
-      this.properties.forEach(prop => {
-        if (!message.objectData.hasOwnProperty(prop)) {
-          isValid = false;
-        }
-      });
-  
-      return isValid;
-    }
 }
 
-export class JoinRoomModel extends ParsableModels implements ActionModel {
+export class JoinRoomModel extends ParsableModels implements ActionInterface {
   
   modelName = 'JoinRoomModel';
-  properties: string[];
+  static properties: ['roomName', 'password', 'playerName'];
   roomName: string;
   password: string;
+  playerName: string;
 
   constructor() {
-    super(JoinRoomModel.name);
-    this.properties = ['roomName', 'password'];
+    super(JoinRoomModel.name, JoinRoomModel.properties);
   }
 
   parse(message: Message) {
-    if (!this.isValidModel(message)) {
-      throw new Error("Malformed " + this.modelName);
-    }
+    this.isValidModel(message);
     this.roomName = message.objectData.roomName;
     this.password = message.objectData.password;
+    this.playerName = message.objectData.playerName;
 
     return this;
   }
-
-  isValidModel(message: Message) {
-    let isValid = true;
-    if (message.objectType != this.modelName) {
-      return false;
-    }
-
-    this.properties.forEach(prop => {
-      if (!message.objectData.hasOwnProperty(prop)) {
-        isValid = false;
-      }
-    });
-
-    return isValid;
-  }
-
 
 }

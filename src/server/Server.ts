@@ -6,7 +6,7 @@ import { Parser } from "./parser/parser";
 import { CreateRoomModel, JoinRoomModel } from "./models/RoomModels";
 import CONSTANTS from "../common/CONSTANTS";
 import { RoomManager } from "./room/roomManager";
-import { StartGameModel } from "./models/gameModel";
+import { StartGameModel } from "./models/gameActionsModel";
 
 export class Server {
   public static readonly PORT:number = 3000; //config file
@@ -67,22 +67,29 @@ export class Server {
     try {
       let selectedRoom = this.roomManager.getRoomBySocket(socket);
       let parsedMessage = this.parser.parseMessage(new Message(msg));
+      
+      //create room
       if (parsedMessage.getType() == CreateRoomModel.name) {
         if (!this.roomManager.createRoom(parsedMessage as CreateRoomModel, socket)) {
           socket.emit(CONSTANTS.MSG_TYPES.ALREADY_JOINED_ROOM);
         }
       }
+      //join room
       else if (parsedMessage.getType() == JoinRoomModel.name) {
         if (!this.roomManager.joinRoom(parsedMessage as JoinRoomModel, socket)) {
           socket.emit(CONSTANTS.MSG_TYPES.ROOM_NOT_JOINED);
         }
       }
+      //start game
       else if (parsedMessage.getType() == StartGameModel.name) {
         if (!selectedRoom || selectedRoom.hasGameStarted) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
         }
         selectedRoom.startGame();
       }
+      //play move
+      
+
       socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
     } catch (e) {
       console.log(e);

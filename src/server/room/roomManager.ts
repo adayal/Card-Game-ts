@@ -37,7 +37,7 @@ export class RoomManager {
       if (room.roomName == joinRoomModel.roomName && 
         room.password == joinRoomModel.password && 
         !room.hasGameStarted) {
-          joinRoom = room.joinRoom(newPlayer);
+          joinRoom = room.joinRoom(newPlayer, joinRoomModel.playerName);
       }
     })
     return joinRoom;

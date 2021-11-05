@@ -3,29 +3,20 @@ import { ParsableModels } from "./parsableModels";
 
 export interface ActionInterface {
     modelName: string;
+    properties: string[];
+
 }
 
 export class ActionModel extends ParsableModels implements ActionInterface {
     modelName = 'ActionModel';
+    static properties: string[];
 
     constructor() {
-        super('ActionModel');
+        super('ActionModel', ActionModel.properties);
     }
 
     parse(message: Message) {
-        if (!this.isValidModel(message)) {
-            throw new Error("Malformed " + this.modelName);
-        }
-        
+        this.isValidModel(message);
         return this;
     }
-
-    isValidModel(message: Message) {
-        if (message.objectType != this.modelName) {
-            return false;
-        }
-
-        return true;
-    }
-    
 }
