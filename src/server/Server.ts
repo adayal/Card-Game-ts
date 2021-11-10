@@ -6,7 +6,8 @@ import { Parser } from "./parser/parser";
 import { CreateRoomModel, JoinRoomModel } from "./models/RoomModels";
 import CONSTANTS from "../common/CONSTANTS";
 import { RoomManager } from "./room/roomManager";
-import { StartGameModel } from "./models/gameActionsModel";
+import { PlayMoveModel, StartGameModel } from "./models/gameActionsModel";
+import { Room } from "./room/room";
 
 export class Server {
   public static readonly PORT:number = 3000; //config file
@@ -85,10 +86,14 @@ export class Server {
         if (!selectedRoom || selectedRoom.hasGameStarted) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
         }
-        selectedRoom.startGame();
+        if (!(<Room>selectedRoom).startGame()) {
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+        }
       }
       //play move
-      
+      else if (parsedMessage.getType() == PlayMoveModel.name) {
+        
+      }
 
       socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
     } catch (e) {

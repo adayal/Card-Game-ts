@@ -1,3 +1,5 @@
+import { Player } from "../../player/player";
+
 /**
  * Card has 2 states (open - face up) (closed - face down)
  * Card has a value defined by a number
@@ -12,6 +14,7 @@ export class Card {
     name: string;
     state: string;
     suite: string;
+    private owner: Player;
 
     static _STATES = {OPEN: 'OPEN', CLOSED: 'CLOSED'};
     static _SUITES = {HEARTS: 'HEARTS', CLUBS: 'CLUBS', DIAMONDS: 'DIAMONDS', SPADES: 'SPADES'};
@@ -26,6 +29,14 @@ export class Card {
 
     setState(state: string) {
       this.state = state;
+    }
+
+    setOwner(player: Player) {
+      this.owner = player;
+    }
+
+    getOwner() {
+      return this.owner;
     }
 
     isEqual(c1: Card): boolean {

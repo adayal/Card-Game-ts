@@ -16,20 +16,16 @@ export abstract class ParsableModels {
     }
 
     isValidModel(message: Message) {
-        let isValid = true;
         if (message.objectType != this.model) {
             throw new Error("Malformed " + this.model);
         }
     
         this.properties.forEach(prop => {
           if (!message.objectData.hasOwnProperty(prop)) {
-            isValid = false;
+            throw new Error("Malformed " + this.model);
           }
         });
 
-        if (!isValid)
-            throw new Error("Malformed " + this.model);
-    
-        return isValid;
-      }
+        return true;
+    }
 }

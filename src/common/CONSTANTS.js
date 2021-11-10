@@ -29,7 +29,8 @@ export default Object.freeze({
     ACTIONS: {
         CHAT_ACTION: "CHAT_ACTION",
         GAME_ACTION: "GAME_ACTION",
-        PLAYER_MOVE_ACTION: "PLAYER_MOVE_ACTION"
+        PLAYER_MOVE_ACTION: "PLAYER_MOVE_ACTION",
+        UPDATE_PLAYER: "UPDATE_PLAYER"
     },
     CHAT_STATES: {
         TYPING: 'TYPING',
@@ -49,6 +50,7 @@ export default Object.freeze({
         CANNOT_PLAY_CARD: "CANNOT_PLAY_CARD",
         CANNOT_FIND_DESTINATION: "CANNOT_FIND_DESTINATION",
         PICK_TRUMP: "PICK_TRUMP",
+        PICKED_TRUMP: "PICKED_TRUMP",
         NO_WINNER: "NO_WINNER",
         WINNER: "WINNER",
         LOCAL_WINNER: "LOCAL_WINNER",

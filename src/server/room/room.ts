@@ -1,3 +1,5 @@
+import { GameRulesAbstract } from "../games/gameRulesAbstract";
+import { SaathAath } from "../games/SaathAath";
 import { CreateRoomModel } from "../models/RoomModels";
 import { PlayerManager } from "../player/playerManager";
 
@@ -8,7 +10,7 @@ export class Room {
   gameName: string;
   password: string;
   hasGameStarted: boolean;
-  game: any; // change to type game obj
+  game: GameRulesAbstract; // change to type game obj
 
   constructor(createRoomModel: CreateRoomModel, socket: any) {
     this.roomName = createRoomModel.roomName;
@@ -17,11 +19,18 @@ export class Room {
     this.sockets = [];
     this.playerManager = new PlayerManager();
     this.playerManager.addPlayer(socket, createRoomModel.playerName);
+    this.createNewGame();
   }
 
   existsInRoom(searchSocket: any): boolean {
     let exists = this.playerManager.getPlayer(searchSocket);
     return exists ? true : false;
+  }
+
+  createNewGame() {
+    if (this.gameName == SaathAath.name) {
+      this.game = new SaathAath();
+    }
   }
 
   joinRoom(socket: any, name: string): boolean {
@@ -33,7 +42,6 @@ export class Room {
   }
 
   startGame(): boolean {
-    //start the game
-    return true;
+    return this.game.startGame(this.playerManager);
   }
 }

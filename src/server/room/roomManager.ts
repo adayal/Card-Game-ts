@@ -39,7 +39,7 @@ export class RoomManager {
         !room.hasGameStarted) {
           joinRoom = room.joinRoom(newPlayer, joinRoomModel.playerName);
       }
-    })
+    });
     return joinRoom;
   }
 }

@@ -20,10 +20,14 @@ export class PlayerManager {
 
     addPlayer(socket: any, playerName: string): boolean {
         if (!this.getPlayer(socket)) {
-            this.players.push(new Player(socket, playerName))
+            this.players.push(new Player(socket, playerName, this.players.length))
             return true;
         }
         return false;
+    }
+
+    getPlayerByNumber(playerNumber: number): Player | any {
+        return playerNumber >= this.players.length ? null : this.players[playerNumber];
     }
 
     removePlayer(socket: any): boolean {
@@ -32,5 +36,31 @@ export class PlayerManager {
             return false;
         this.players.splice(index, 1);
         return true;
+    }
+
+    resetAllHands() {
+        this.players.forEach(x => {
+            x.clearHand();
+        });
+    }
+
+    resetAllStates() {
+        this.players.forEach(x => {
+            x.resetPlayerState();
+        });
+    }
+
+    tallyPoints() {
+        let sum = 0;
+        this.players.forEach(x => {
+            sum += x.getPoints();
+        });
+        return sum;
+    }
+
+    sendToAllPlayers(msgType: string, msg: any) {
+        this.players.forEach(x => {
+            x.sendToPlayer(msgType, msg);
+        });
     }
 }
