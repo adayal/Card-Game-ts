@@ -3,7 +3,7 @@ export default Object.freeze({
         SAATH_AATH: 'SAATH_AATH'
     },
     MSG_TYPES: {
-        JOIN_GAME: 'JOIN_GAME',
+        JOIN_ROOM: 'JOIN_ROOM',
         DISCONNECT: 'DISCONNECT',
         PLAY_CARD: 'PLAY_CARD',
         START_GAME: 'START_GAME',

@@ -15,16 +15,18 @@ export class Card {
     state: string;
     suite: string;
     private owner: Player;
+    private cardNumber: number;
 
     static _STATES = {OPEN: 'OPEN', CLOSED: 'CLOSED'};
     static _SUITES = {HEARTS: 'HEARTS', CLUBS: 'CLUBS', DIAMONDS: 'DIAMONDS', SPADES: 'SPADES'};
     static _NAMES = {JACK: 'JACK', QUEEN: 'QUEEN', KING: 'KING', ACE: 'ACE'};
 
-    constructor(value: number, name: string, state: string, suite: string) {
+    constructor(value: number, name: string, state: string, suite: string, cardNumber: number) {
         this.value = value;
         this.name = Object.keys(Card._NAMES).includes(name.toUpperCase()) ? name.toUpperCase() : value + "";
         this.suite = suite;
         this.state = state;
+        this.cardNumber = cardNumber;
     }
 
     setState(state: string) {
@@ -41,5 +43,24 @@ export class Card {
 
     isEqual(c1: Card): boolean {
       return (c1.name == this.name && c1.suite == this.suite && c1.value == this.value);
+    }
+
+    getJsonObject() {
+      if (this.state == Card._STATES.CLOSED) {
+        return {
+          cardNumber: this.cardNumber,
+          state: this.state,
+
+        };
+      }
+
+      //OPEN
+      return {
+        cardNumber: this.cardNumber,
+        state: this.state,
+        value: this.value,
+        name: this.name,
+        suite: this.suite
+      };
     }
 }

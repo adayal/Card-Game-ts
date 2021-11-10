@@ -15,16 +15,17 @@ export class Deck {
     //queen 4 suites, 12
     //king 4 suites, 13
     //ace 4 suites, 14
+    let cardCounter = 1;
     for (let i = 2; i <= 10; i++) {
       for (let suite in Card._SUITES) {
-        this._deck.push(new Card(i, i + "", Card._STATES.CLOSED, suite));
+        this._deck.push(new Card(i, i + "", Card._STATES.CLOSED, suite, cardCounter++));
       }
     }
 
-    let counter = 11;
     for (let suite in Card._SUITES) {
+      let counter = 11;
       for (let name in Card._NAMES) {
-        this._deck.push(new Card(counter++, name, Card._STATES.CLOSED, suite));
+        this._deck.push(new Card(counter++, name, Card._STATES.CLOSED, suite, cardCounter++));
       }
     }
   }

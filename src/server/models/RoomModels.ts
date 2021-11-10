@@ -6,7 +6,7 @@ import { ActionInterface } from './actionModel';
 export class CreateRoomModel extends ParsableModels implements ActionInterface {
         
     modelName = 'CreateRoomModel';
-    static properties: ['roomName', 'gameName', 'password'];
+    static properties: string[] = ['roomName', 'gameName', 'password'];
     roomName: string;
     gameName: string;
     password: string;
@@ -30,7 +30,7 @@ export class CreateRoomModel extends ParsableModels implements ActionInterface {
 export class JoinRoomModel extends ParsableModels implements ActionInterface {
   
   modelName = 'JoinRoomModel';
-  static properties: ['roomName', 'password', 'playerName'];
+  static properties: string[] = ['roomName', 'password', 'playerName'];
   roomName: string;
   password: string;
   playerName: string;

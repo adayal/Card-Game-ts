@@ -18,7 +18,7 @@ export class Parser implements ParserInterface {
         if (message.commandName == Constants.default.MSG_TYPES.CREATE_ROOM) {
             return new CreateRoomModel().parse(message);
         }
-        else if (message.commandName == Constants.default.MSG_TYPES.JOIN_GAME) {
+        else if (message.commandName == Constants.default.MSG_TYPES.JOIN_ROOM) {
             return new JoinRoomModel().parse(message);
         }
         else if (message.commandName == Constants.default.MSG_TYPES.START_GAME) {

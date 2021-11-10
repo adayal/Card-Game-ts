@@ -1,0 +1,185 @@
+{
+    "meta": {
+        "__export_time": 1636530172414,
+        "__export_app": "firecamp_v2.3.1 ",
+        "__export_version": 1
+    },
+    "project": {
+        "name": "Card App",
+        "description": "",
+        "auth": {},
+        "scripts": {
+            "pre": "",
+            "post": "",
+            "test": ""
+        },
+        "meta": {
+            "active_auth": "no_auth"
+        }
+    },
+    "modules": [],
+    "requests": [
+        {
+            "meta": {
+                "name": "Connect to game",
+                "description": "Create room",
+                "type": "socketio",
+                "version": "2.0"
+            },
+            "url": {
+                "slashes": true,
+                "protocol": "http:",
+                "hash": "",
+                "pathname": "/",
+                "auth": "",
+                "host": "localhost:3000",
+                "port": "3000",
+                "hostname": "localhost",
+                "password": "",
+                "username": "",
+                "origin": "http://localhost:3000",
+                "href": "http://localhost:3000/",
+                "query_params": []
+            },
+            "config": {
+                "version": "v2",
+                "rejectUnauthorized": false,
+                "timeout": 20000,
+                "reconnection": true,
+                "reconnectionAttempts": 3,
+                "reconnectionDelay": 1000,
+                "reconnectionDelayMax": 5000
+            },
+            "connections": [
+                {
+                    "name": "Default",
+                    "forceNew": false,
+                    "namespace": "",
+                    "path": "",
+                    "ping": false,
+                    "ping_interval": 3000,
+                    "transports": {
+                        "websocket": true,
+                        "polling": true
+                    },
+                    "headers": [],
+                    "query_params": [],
+                    "auth": [],
+                    "is_default": true
+                },
+                {
+                    "name": "player2",
+                    "forceNew": false,
+                    "namespace": "",
+                    "path": "",
+                    "ping": false,
+                    "ping_interval": 3000,
+                    "transports": {
+                        "websocket": true,
+                        "polling": true
+                    },
+                    "headers": [],
+                    "query_params": [],
+                    "auth": []
+                }
+            ],
+            "listeners": [
+                "ACKNOWLEDGED",
+                "ERROR_ILLEGAL_MOVE",
+                "PICK_TRUMP",
+                "PICKED_TRUMP",
+                "UPDATE_PLAYER",
+                "GENERIC_ERROR",
+                "ROOM_NOT_JOINED",
+                "ALREADY_JOINED_ROOM"
+            ],
+            "emitter_collection": [
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\n    \"commandName\": \"CREATE_ROOM\",\n    \"objectType\": \"CreateRoomModel\",\n    \"objectData\": {\n        \"roomName\": \"{{roomName}}\",\n        \"gameName\": \"{{gameName}}\",\n        \"password\": \"{{roomPassword}}\",\n        \"playerName\": \"test02\"\n    }\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "Create Room ",
+                        "interval": "",
+                        "ack": false
+                    },
+                    "path": "./d"
+                },
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\n    \"commandName\": \"START_GAME\",\n    \"objectType\": \"StartGameModel\",\n    \"objectData\": {\n        \"startGame\":true\n    }\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "Game Actions",
+                        "interval": "",
+                        "ack": false
+                    }
+                },
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\n    \"commandName\": \"JOIN_ROOM\",\n    \"objectType\": \"JoinRoomModel\",\n    \"objectData\": {\n        \"roomName\": \"{{roomName}}\",\n        \"password\": \"{{roomPassword}}\",\n        \"playerName\": \"test01\"\n    }\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "Join Room",
+                        "interval": "",
+                        "ack": false
+                    }
+                },
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\n    \"commandName\": \"PLAYER_MOVE_ACTION\",\n    \"objectType\": \"PlayMoveModel\",\n    \"objectData\": {\n        \"playerNumber\": \"0\",\n        \"action\": {\n            \"commandName\": \"PLAYER_MOVE_ACTION\",\n            \"objectType\": \"ActionPlayModel\",\n            \"objectData\": {\n                \"pickedTrump\": \"HEARTS\"\n            }\n        }, \n        \"actionName\": \"test01\"\n    }\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "Set Trump",
+                        "interval": "",
+                        "ack": false
+                    }
+                }
+            ]
+        }
+    ],
+    "environments": [
+        {
+            "name": "Development",
+            "variables": {
+                "gameName": "SaathAath",
+                "roomName": "testRoom4",
+                "roomPassword": "roomPassword1"
+            }
+        },
+        {
+            "name": "Production",
+            "variables": {
+                "variable_name": "variable_value"
+            }
+        }
+    ]
+}

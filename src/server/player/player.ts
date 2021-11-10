@@ -109,8 +109,9 @@ export class Player {
     }
 
     //todo add layer of encryption here
+    //has to be stringified if it's too big of an object (:facepalm:)
     sendToPlayer(typeOfMsg: string, msg: any) {
-        this._socket.emit(typeOfMsg, msg);
+        this._socket.emit(typeOfMsg, JSON.stringify(msg));
     }
 
     updatePlayerHand(opponentOpenField: Card[] | null, opponentPlayedCard: Card[] | null, visiblePile: Card[] | null, shouldForceSync: boolean) {

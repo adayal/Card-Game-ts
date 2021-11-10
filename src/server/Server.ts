@@ -83,7 +83,7 @@ export class Server {
       }
       //start game
       else if (parsedMessage.getType() == StartGameModel.name) {
-        if (!selectedRoom || selectedRoom.hasGameStarted) {
+        if (!selectedRoom || (<Room>selectedRoom).hasGameStarted) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
         }
         if (!(<Room>selectedRoom).startGame()) {

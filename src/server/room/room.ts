@@ -1,6 +1,8 @@
 import { GameRulesAbstract } from "../games/gameRulesAbstract";
 import { SaathAath } from "../games/SaathAath";
+import { PlayMoveModel } from "../models/gameActionsModel";
 import { CreateRoomModel } from "../models/RoomModels";
+import { Player } from "../player/player";
 import { PlayerManager } from "../player/playerManager";
 
 export class Room {
@@ -43,5 +45,9 @@ export class Room {
 
   startGame(): boolean {
     return this.game.startGame(this.playerManager);
+  }
+
+  playGameAction(player: Player, playerMove: PlayMoveModel) {
+    return this.game.evaluateRules(player, playerMove)
   }
 }

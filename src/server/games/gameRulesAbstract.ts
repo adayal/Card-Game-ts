@@ -2,7 +2,6 @@ import CONSTANTS from "../../common/CONSTANTS";
 import { PlayMoveModel, WaitingForActionModel } from "../models/gameActionsModel";
 import { Player } from "../player/player";
 import { PlayerManager } from "../player/playerManager";
-import { Card } from "./CardGames/Card";
 import { Deck } from "./CardGames/Deck";
 
 export abstract class GameRulesAbstract {
@@ -22,9 +21,6 @@ export abstract class GameRulesAbstract {
     
     //evaluate the rules of the game given a player and their move
     abstract evaluateRules(player: Player, move: PlayMoveModel): boolean;
-    
-    //get the current state for a specific player
-    abstract getCurrentStateForPlayer(player: Player): any;
 
     isWaitingForThisAction(caller: WaitingForActionModel) {
         return this._waitingForAction.isEqual(caller);
@@ -43,6 +39,7 @@ export abstract class GameRulesAbstract {
         this._actionNames = actionNames;
         this._gameName = gameName;
         this._gameState = gameState;
+        this._hasGameStarted = false;
     }
 
 }

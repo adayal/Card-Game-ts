@@ -12,7 +12,7 @@ export class ActionModel extends ParsableModels implements ActionInterface {
     static properties: string[];
 
     constructor() {
-        super('ActionModel', ActionModel.properties);
+        super('ActionModel', []);
     }
 
     parse(message: Message) {

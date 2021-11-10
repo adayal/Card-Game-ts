@@ -46,7 +46,7 @@ export class SaathAath extends GameRulesAbstract {
 
         //initialize game lock
         this._hasGameStarted = true;
-        
+
         this._field = [];
         this._playerManager = playerManager;
         this._playerManager.resetAllHands();
@@ -82,7 +82,7 @@ export class SaathAath extends GameRulesAbstract {
         }
         let current = this._playerManager.getPlayerByNumber(playerNumber);
         let other = this._playerManager.getPlayerByNumber(Number(!playerNumber));
-        if (current == null || other == null) {
+        if (!current || !other) {
             return false;
         }
 
@@ -96,7 +96,10 @@ export class SaathAath extends GameRulesAbstract {
                 return false;
             }
             if (isFacedDown) {
+                //closed means nobody can see
                 drawnCard.setState(Card._STATES.CLOSED);
+            } else {
+                drawnCard.setState(Card._STATES.OPEN);  
             }
 
             if (dealToPlayerField) {
@@ -127,10 +130,6 @@ export class SaathAath extends GameRulesAbstract {
         }
         
         return true;
-    }
-
-    getCurrentStateForPlayer(player: Player) {
-        throw new Error("Method not implemented.");
     }
 
     /**

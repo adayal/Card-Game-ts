@@ -6,7 +6,7 @@ import { ParsableModels } from "./parsableModels";
 //start the game
 export class StartGameModel extends ParsableModels implements ActionModel {
     modelName = 'StartGameModel';
-    static properties: ['startGame'];
+    static properties: string[] = ['startGame'];
     startGame: boolean;
 
     constructor() {
@@ -35,7 +35,7 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
   private _action: ActionPlayModel;
   
   //nested objects
-  static properties: ['playerNumber', 'actionName', '_action'];
+  static properties: string[] = ['playerNumber', 'actionName', 'action'];
   
 
   constructor() {
@@ -71,7 +71,7 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
 
 export class ActionPlayModel extends ParsableModels implements ActionModel {
   modelName = 'ActionPlayModel';
-  static properties: ['pickedTrump', 'playedCard', 'offerDraw', 'offerResign'];
+  static properties: string[] = ['pickedTrump', 'playedCard', 'offerDraw', 'offerResign'];
   private _pickedTrump: string;
   private _playedCard: Card | null;
   private _offerDraw: boolean;
@@ -169,16 +169,27 @@ export class SyncPlayerModel {
     }
 
     public getJsonObject() {
+      //foreach player hand, convert the cards to a card json object
+      //hack to get around circular reference error
+      let temp = this.getCardJsonObject(this._playerHand);
       return {
-        playerHand: this._playerHand,
-        playerOpenField: this._playerOpenField,
+        playerHand: this.getCardJsonObject(this._playerHand),
+        playerOpenField: this.getCardJsonObject(this._playerOpenField),
         opponent: {
-          opponentOpenField: this._opponentOpenField,
-          opponentPlayedCards: this._opponentPlayedCard
+          opponentOpenField: this.getCardJsonObject(this._opponentOpenField),
+          opponentPlayedCards: this.getCardJsonObject(this._opponentPlayedCard),
         },
-        sharedVisiblePile: this._visiblePile,
+        sharedVisiblePile: this.getCardJsonObject(this._visiblePile),
         points: this._points,
         forceSync: this._forceSync
       };
+    }
+
+    private getCardJsonObject(cards: Card[] | null) {
+      let convertCardsToObjects: Object[] = [];
+      cards?.forEach((card) => {
+        convertCardsToObjects.push(card.getJsonObject());
+      })
+      return convertCardsToObjects;
     }
 }
