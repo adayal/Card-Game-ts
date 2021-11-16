@@ -32,6 +32,7 @@ export class Server {
   private createApp(): void {
     this.app = express();
     this.app.use(cors());
+    this.app.get('/', (req, res) => res.sendFile(__dirname + '../ui/public/index.html'));
   }
 
   private createServer(): void {
