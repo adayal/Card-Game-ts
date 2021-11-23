@@ -10,7 +10,7 @@ import { PlayMoveModel, StartGameModel } from "./models/gameActionsModel";
 import { Room } from "./room/room";
 
 export class Server {
-  public static readonly PORT:number = 3000; //config file
+  public static readonly PORT:number = 3001; //config file
   private app: express.Application;
   private server: http.Server;
   private io: any;

@@ -5,7 +5,7 @@
   "main": "dist/server/app.js",
   "scripts": {
     "test": "test",
-    "start": "rm -rf ./dist && react-scripts start && tsc  && cross-env NODE_ENV=development node --inspect dist/index.js"
+    "start": "rm -rf ./dist && tsc  && cross-env NODE_ENV=development node --inspect dist/index.js & cd src/ui && react-scripts start"
   },
   "keywords": [
     "Typescript",
