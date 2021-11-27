@@ -73,7 +73,7 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
   modelName = 'ActionPlayModel';
   static properties: string[] = ['pickedTrump', 'playedCard', 'offerDraw', 'offerResign'];
   private _pickedTrump: string;
-  private _playedCard: Card | null;
+  private _playedCard: any;
   private _offerDraw: boolean;
   private _offerResign: boolean;
   
@@ -94,8 +94,8 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
     return this._pickedTrump;
   }
 
-  getPlayedCard() {
-    return this._playedCard;
+  getPlayedCard(): Card {
+    return Card.constructCardFromJson(this._playedCard.name, this._playedCard.suite)
   }
 }
 

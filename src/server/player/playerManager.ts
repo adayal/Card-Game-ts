@@ -27,6 +27,7 @@ export class PlayerManager {
     }
 
     getPlayerByNumber(playerNumber: number): Player | any {
+        playerNumber < 0 ? playerNumber * -1 : playerNumber;
         return playerNumber >= this.players.length ? null : this.players[playerNumber];
     }
 
