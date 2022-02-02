@@ -1,4 +1,4 @@
-import { CreateRoomModel, JoinRoomModel } from "../models/RoomModels";
+import { CreateRoomModel, JoinRoomModel, ListRoomModel } from "../models/RoomModels";
 import { Message } from "../models/message";
 import * as Constants from "../../common/CONSTANTS";
 import { ParsableModels } from "../models/parsableModels";
@@ -17,6 +17,9 @@ export class Parser implements ParserInterface {
     parseMessage(message: Message): ParsableModels {
         if (message.commandName == Constants.default.MSG_TYPES.CREATE_ROOM) {
             return new CreateRoomModel().parse(message);
+        }
+        else if (message.commandName == Constants.default.MSG_TYPES.LIST_ROOMS) {
+            return new ListRoomModel().parse(message);
         }
         else if (message.commandName == Constants.default.MSG_TYPES.JOIN_ROOM) {
             return new JoinRoomModel().parse(message);

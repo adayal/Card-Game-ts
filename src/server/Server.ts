@@ -3,7 +3,7 @@ import cors from "cors";
 import * as http from "http";
 import { Message } from "./models/message";
 import { Parser } from "./parser/parser";
-import { CreateRoomModel, JoinRoomModel } from "./models/RoomModels";
+import { CreateRoomModel, JoinRoomModel, ListRoomModel } from "./models/RoomModels";
 import CONSTANTS from "../common/CONSTANTS";
 import { RoomManager } from "./room/roomManager";
 import { PlayMoveModel, StartGameModel } from "./models/gameActionsModel";
@@ -75,6 +75,10 @@ export class Server {
         if (!this.roomManager.createRoom(parsedMessage as CreateRoomModel, socket)) {
           socket.emit(CONSTANTS.MSG_TYPES.ALREADY_JOINED_ROOM);
         }
+      }
+      //list rooms
+      else if (parsedMessage.getType() == ListRoomModel.name) {
+        socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED_LIST_ROOM, this.roomManager.getAllPublicRoomData())
       }
       //join room
       else if (parsedMessage.getType() == JoinRoomModel.name) {

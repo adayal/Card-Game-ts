@@ -47,5 +47,17 @@ export class JoinRoomModel extends ParsableModels implements ActionInterface {
 
     return this;
   }
+}
 
+export class ListRoomModel extends ParsableModels implements ActionInterface {
+  modelName = 'ListRoomModel';
+  static properties: string[] = [];
+  constructor() {
+    super(ListRoomModel.name, ListRoomModel.properties);
+  }
+
+  parse(message: Message) {
+    this.isValidModel(message);
+    return this;
+  }
 }

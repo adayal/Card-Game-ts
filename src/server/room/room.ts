@@ -50,4 +50,14 @@ export class Room {
   playGameAction(player: Player, playerMove: PlayMoveModel) {
     return this.game.evaluateRules(player, playerMove)
   }
+
+  getPublicData() {
+    return {
+      hasGameStarted: this.hasGameStarted,
+      roomName: this.roomName,
+      gameName: this.gameName,
+      hasPassword: this.password != null && this.password.length > 0,
+      currentPlayerCount: this.playerManager.getPlayerCount(),
+    }
+  }
 }

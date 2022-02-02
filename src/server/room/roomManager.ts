@@ -26,6 +26,14 @@ export class RoomManager {
     return foundRoom;
   }
 
+  getAllPublicRoomData(): any[] {
+    let allRoomData: any[] = [];
+    this.rooms.forEach(room => {
+      allRoomData.push(room.getPublicData());
+    });
+    return allRoomData;
+  }
+
   joinRoom(joinRoomModel: JoinRoomModel, newPlayer: any): boolean {
     let joinRoom = false;
     let alreadyInRoom = this.getRoomBySocket(newPlayer);

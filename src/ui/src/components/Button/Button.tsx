@@ -1,17 +1,22 @@
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 
-class Button extends React.Component {
-    constructor(props: any) {
-        super(props);
-        this.state = {
-            value: null,
-        };
-    }
+interface Props {
+    name: string;
+    route: string;
+}
+
+export class Button extends React.Component<Props> {
+
     render() {
         return (
-            <button>
-                {this.props.helpMe}
-            </button>
+            <Link to={this.props.route}>
+                <button>
+                    {this.props.name}
+                </button>
+            </Link>
         );
     }
 }
+
+export default Button;
