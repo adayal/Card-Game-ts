@@ -28,7 +28,7 @@ export class Player {
         return this._playerName;
     }
 
-    getPlayerNumber() {
+    getPlayerNumber(): number {
         return this._playerNumber;
     }
 
@@ -96,6 +96,12 @@ export class Player {
             }
         }
 
+        for (let i = 0; i < this._openField.length; i++) {
+            if (this._openField[i].isEqual(cardToRemove)) {
+                return this._openField.splice(i, 1)[0];
+            }
+        }
+
         return null;
     }
 
@@ -114,6 +120,19 @@ export class Player {
         this._socket.emit(typeOfMsg, JSON.stringify(msg));
     }
 
+    updateOpponentPlayedCard(opponentPlayedCard: Card[], shouldForceSync: boolean, keepPreviousValues: boolean) {
+        let opponentOpenField = null;
+        let visiblePile = null;
+        if (keepPreviousValues && this._lastSentMessage) {
+            opponentOpenField = <Card[]>this._lastSentMessage.getJsonObject().opponent.opponentOpenField;
+            visiblePile = <Card[]>this._lastSentMessage.getJsonObject().sharedVisiblePile;
+        }
+        let model = new SyncPlayerModel(this._hand, this._openField, opponentOpenField, opponentPlayedCard, visiblePile, this._points, shouldForceSync);
+        let msg = model.getJsonObject();
+        this._lastSentMessage = model;
+        this.sendToPlayer(CONSTANTS.ACTIONS.UPDATE_PLAYER, msg);
+    }
+
     updatePlayerHand(opponentOpenField: Card[] | null, opponentPlayedCard: Card[] | null, visiblePile: Card[] | null, shouldForceSync: boolean) {
         //send update hand message
         //send current hand of player
@@ -121,6 +140,43 @@ export class Player {
         let msg = model.getJsonObject();
         this._lastSentMessage = model;
         this.sendToPlayer(CONSTANTS.ACTIONS.UPDATE_PLAYER, msg);
+    }
+
+    doesHandContainSuite(suite: string, checkOpenOnly: boolean) {
+        let found = false;
+        this._hand.forEach(x => {
+            if (x.suite == suite) {
+                found = true;
+            }
+        });
+        this._openField.forEach(x => {
+            if (checkOpenOnly && x.state == Card._STATES.OPEN) {
+                if (x.suite == suite) found = true;
+            } else {
+                if (x.suite == suite) found = true;
+            }
+        });
+        return found;
+    }
+
+    getCardFromHand(card: Card | null, value: string, suite: string): Card | undefined {
+        let cardFound = undefined;
+        if (card) {
+            cardFound = this._hand.find((x) => {
+                x.isEqual(card);
+            }) || this._openField.find((x) => {
+                x.isEqual(card)
+            });
+            return cardFound;
+        }
+        
+        cardFound = this._hand.find((x) => {
+            x.name == value && x.suite == suite
+        }) || this._openField.find((x) => {
+            x.name == value && x.suite == suite
+        });
+
+        return cardFound;
     }
 
     deleteHistory() {

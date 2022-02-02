@@ -1,5 +1,5 @@
 import CONSTANTS from "../../common/CONSTANTS";
-import { PlayMoveModel, SyncPlayerModel, WaitingForActionModel } from "../models/gameActionsModel";
+import { PlayMoveModel, WaitingForActionModel } from "../models/gameActionsModel";
 import { Player } from "../player/player";
 import { PlayerManager } from "../player/playerManager";
 import { Card } from "./CardGames/Card";
@@ -190,8 +190,99 @@ export class SaathAath extends GameRulesAbstract {
      * @param player 
      * @param move 
      */
-    private resolvePlayCard(player: Player, move: PlayMoveModel) {
+    private resolvePlayCard(player: Player, move: PlayMoveModel): boolean {
+        if (!this.canPlayCard(player, move)) {
+            return false;
+        }
+
+        let playedCard = player.playCard(move.getAction().getPlayedCard()!);
+        if (!playedCard) {
+            return false;
+        }
+
+        //announce to other player
+        let otherPlayer = <Player>this._playerManager.getPlayerByNumber(Number(!player.getPlayerNumber()));
+        otherPlayer.updateOpponentPlayedCard([playedCard], true, true);
+        
+        let winner: Player;
+        
+        if (this._field.length > 0) {
+            let opponentsCard = this._field[0];
+            if (opponentsCard.suite == (<Card>playedCard).suite) {
+                winner = opponentsCard.value > (<Card>playedCard).value ? otherPlayer : player;
+                this.handleLocalWin(winner);
+            } else {
+                //if opponent's card is trump, it automatically wins
+                //if current player's card is trump, it automatically wins
+                //if none are true ^, opponent automatically wins
+                if (opponentsCard.suite == this._trumpType) {
+                    winner = otherPlayer;
+                    this.handleLocalWin(otherPlayer);
+                } else if ((<Card>playedCard).suite == this._trumpType) {
+                    winner = player;
+                    this.handleLocalWin(player);
+                } else {
+                    winner = otherPlayer;
+                    this.handleLocalWin(otherPlayer);
+                }
+            }
+
+            //check if winner
+            if (!this.isWinner()) {
+                //reset the field
+                this._field = [];
+
+                //wait for winner's turn
+                this._waitingForAction = new WaitingForActionModel(winner.getPlayerNumber(), this._actionNames.PLAY_CARD);
+                winner.sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
+            }
+        } else {
+            this._field.push(playedCard);
+            this._turnCounter = otherPlayer.getPlayerNumber();
+            this._waitingForAction = new WaitingForActionModel(otherPlayer.getPlayerNumber(), this._actionNames.PLAY_CARD);
+            otherPlayer.sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
+        }
+
         return true;
+    }
+
+    private canPlayCard(player: Player, move: PlayMoveModel): boolean {
+        if (!this.isWaitingForThisAction(move.getWaiterRepresentation())) {
+            return false;
+        }
+
+        let playedCard = player.getCardFromHand(move.getAction().getPlayedCard(), "", "");
+        if (!playedCard) {
+            return false;
+        }
+
+        //if the card is faced down
+        if (playedCard.state == Card._STATES.CLOSED) {
+            return false;
+        }
+
+        if (this._field.length > 0) {
+            //suite must match
+            //if suite doesn't match, check if the player has a card where the suite does match
+            let opponentCard = this._field[0];
+            if (opponentCard.suite != playedCard.suite && 
+                playedCard.suite != this._trumpType && 
+                player.doesHandContainSuite(opponentCard.suite, true)) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private handleLocalWin(winner: Player) {
+        winner.setPoints(winner.getPoints() + 1);
+        winner.sendToPlayer(CONSTANTS.CLIENT_MSG.LOCAL_WINNER, {});
+        let loser = this._playerManager.getPlayerByNumber(winner.getPlayerNumber() - 1);
+        if (loser) {
+            (<Player>loser).sendToPlayer(CONSTANTS.CLIENT_MSG.LOCAL_LOSER, {});
+        }
+        this._turnCounter = winner.getPlayerNumber();
     }
 
     /**
@@ -208,8 +299,9 @@ export class SaathAath extends GameRulesAbstract {
         return true;
     }
 
-    private isWinner(): any{
+    private isWinner(): boolean{
         if (this._playerManager.tallyPoints() == 15) {
+            //player1 is supposed to make 8 points
             let player1 = <Player>this._playerManager.getPlayerByNumber(0);
             let player2 = <Player>this._playerManager.getPlayerByNumber(1);
             if (player1.getPoints() > 8) {
@@ -222,7 +314,7 @@ export class SaathAath extends GameRulesAbstract {
             }
             this._playerManager.resetAllStates();
         }
-        return null;
+        return false;
     }
 
 

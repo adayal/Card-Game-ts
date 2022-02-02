@@ -63,4 +63,18 @@ export class Card {
         suite: this.suite
       };
     }
+
+    static constructCardFromJson(name: string, suite: string): Card {
+      if (name == Card._NAMES.JACK) {
+        return new Card(11, name, Card._STATES.OPEN, suite, -1);
+      } else if (name == Card._NAMES.QUEEN) {
+        return new Card(12, name, Card._STATES.OPEN, suite, -1);
+      } else if (name == Card._NAMES.KING) {
+        return new Card(13, name, Card._STATES.OPEN, suite, -1);
+      } else if (name == Card._NAMES.ACE) {
+        return new Card(14, name, Card._STATES.OPEN, suite, -1);
+      } else {
+        return new Card(Number.parseInt(name), name, Card._STATES.OPEN, suite, -1);
+      }
+    }
 }
