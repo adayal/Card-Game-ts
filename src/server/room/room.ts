@@ -51,6 +51,10 @@ export class Room {
     return this.game.evaluateRules(player, playerMove)
   }
 
+  getPlayerManager(): PlayerManager {
+    return this.playerManager;
+  }
+
   getPublicData() {
     return {
       hasGameStarted: this.hasGameStarted,

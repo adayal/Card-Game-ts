@@ -15,17 +15,27 @@ export abstract class ParsableModels {
         return this.model;
     }
 
-    isValidModel(message: Message) {
+    isValidModel(message: Message, atLeastOneProperty: boolean = false) {
         if (message.objectType != this.model) {
             throw new Error("Malformed " + this.model);
         }
     
-        this.properties.forEach(prop => {
-          if (!message.objectData.hasOwnProperty(prop)) {
-            throw new Error("Malformed " + this.model);
-          }
-        });
-
+        if (atLeastOneProperty) {
+            let foundProperty = false;
+            this.properties.forEach(prop => {
+                if (message.objectData.hasOwnProperty(prop)) {
+                  foundProperty = true;
+                }
+              });
+            if (!foundProperty) throw new Error ("Malformed " + this.model);
+        } else {
+            this.properties.forEach(prop => {
+                if (!message.objectData.hasOwnProperty(prop)) {
+                  throw new Error("Malformed " + this.model);
+                }
+              });
+        }
+        
         return true;
     }
 }

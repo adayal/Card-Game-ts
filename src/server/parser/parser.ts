@@ -2,7 +2,7 @@ import { CreateRoomModel, JoinRoomModel, ListRoomModel } from "../models/RoomMod
 import { Message } from "../models/message";
 import * as Constants from "../../common/CONSTANTS";
 import { ParsableModels } from "../models/parsableModels";
-import { PlayMoveModel, StartGameModel } from "../models/gameActionsModel";
+import { PlayMoveModel, RequestPlayerSyncModel, StartGameModel, SyncPlayerModel } from "../models/gameActionsModel";
 
 interface ParserInterface {
     parseMessage(message: Message): ParsableModels;
@@ -29,6 +29,9 @@ export class Parser implements ParserInterface {
         }
         else if (message.commandName == Constants.default.ACTIONS.PLAYER_MOVE_ACTION) {
             return new PlayMoveModel().parse(message);
+        }
+        else if (message.commandName == Constants.default.ACTIONS.UPDATE_PLAYER) {
+            return new RequestPlayerSyncModel().parse(message);
         }
 
         throw Error("Not a parsable model");

@@ -16,7 +16,7 @@ export class RoomManager {
     return true;
   }
 
-  getRoomBySocket(searchSocket: any): any {
+  getRoomBySocket(searchSocket: any): Room | any {
     let foundRoom = null;
     this.rooms.forEach(room => {
       if (room.existsInRoom(searchSocket)) {

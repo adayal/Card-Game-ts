@@ -40,6 +40,7 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
 
   constructor() {
     super(PlayMoveModel.name, PlayMoveModel.properties);
+    this._action = new ActionPlayModel();
   }
 
   getPlayerNumber(): number{
@@ -56,11 +57,10 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
 
   parse(message: Message) {
     this.isValidModel(message);
-    let actionMessage = new ActionPlayModel().parse(<Message>message.objectData.actionMessage);
+    this._action.parse(new Message(message.objectData.action));
     this._playerNumber = message.objectData.playerNumber;
     this._actionName = message.objectData.actionName;
-    this._action = actionMessage;
-
+``
     return this;
   }
 
@@ -82,7 +82,7 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
   }
 
   parse(message: Message) {
-    this.isValidModel(message);
+    this.isValidModel(message, true);
     this._offerDraw = message.objectData.offerDraw ?? false;
     this._offerResign = message.objectData.offerResign ?? false;
     this._pickedTrump = message.objectData.pickedTrump;
@@ -125,6 +125,23 @@ export class WaitingForActionModel extends ParsableModels implements ActionModel
 
   isEqual(waiter: WaitingForActionModel) {
     return this._playerNumber == waiter._playerNumber && this._actionName == waiter._actionName;
+  }
+}
+
+//Request the server to rsync player data
+export class RequestPlayerSyncModel extends ParsableModels implements ActionModel {
+  modelName = "RequestPlayerSyncModel";
+  static properties: ['playerNumber'];
+  private _playerNumber: Number;
+
+  constructor() {
+    super(RequestPlayerSyncModel.name, RequestPlayerSyncModel.properties);
+  }
+
+  parse(message: Message) {
+    this.isValidModel(message, false);
+    this._playerNumber = message.objectData.playerNumber;
+    return this;
   }
 }
 

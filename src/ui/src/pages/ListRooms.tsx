@@ -4,26 +4,26 @@ import { WebSocketContext } from "../WebSocket";
 
 
 class ListRooms extends React.Component<any> {
-    rooms = useState([])
-    dispatch = useDispatch();
-    ws = useContext(WebSocketContext);
+    // rooms = useState([])
+    // dispatch = useDispatch();
+    // ws = useContext(WebSocketContext);
 
-    getRooms = () => {
-        if (this.ws) {
-            this.ws.getRooms()
-        }
-    }
+    // getRooms = () => {
+    //     if (this.ws) {
+    //         this.ws.getRooms()
+    //     }
+    // }
 
-    render() {
-        useEffect(() => {
+    // render() {
+    //     useEffect(() => {
 
-        })
-        return (
-            <div>
+    //     })
+    //     return (
+    //         <div>
 
-            </div>
-        );
-    }
+    //         </div>
+    //     );
+    // }
 }
 
 export default ListRooms;

@@ -6,7 +6,7 @@ import { Parser } from "./parser/parser";
 import { CreateRoomModel, JoinRoomModel, ListRoomModel } from "./models/RoomModels";
 import CONSTANTS from "../common/CONSTANTS";
 import { RoomManager } from "./room/roomManager";
-import { PlayMoveModel, StartGameModel } from "./models/gameActionsModel";
+import { PlayMoveModel, RequestPlayerSyncModel, StartGameModel, SyncPlayerModel } from "./models/gameActionsModel";
 import { Room } from "./room/room";
 
 export class Server {
@@ -65,7 +65,7 @@ export class Server {
     });
   }
 
-  private handleMessage(msg: any, socket: any): any{
+  private handleMessage(msg: any, socket: any): any {
     try {
       let selectedRoom = this.roomManager.getRoomBySocket(socket);
       let parsedMessage = this.parser.parseMessage(new Message(msg));
@@ -74,31 +74,58 @@ export class Server {
       if (parsedMessage.getType() == CreateRoomModel.name) {
         if (!this.roomManager.createRoom(parsedMessage as CreateRoomModel, socket)) {
           socket.emit(CONSTANTS.MSG_TYPES.ALREADY_JOINED_ROOM);
+          return;
         }
       }
       //list rooms
       else if (parsedMessage.getType() == ListRoomModel.name) {
         socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED_LIST_ROOM, this.roomManager.getAllPublicRoomData())
+        return;
       }
       //join room
       else if (parsedMessage.getType() == JoinRoomModel.name) {
         if (!this.roomManager.joinRoom(parsedMessage as JoinRoomModel, socket)) {
           socket.emit(CONSTANTS.MSG_TYPES.ROOM_NOT_JOINED);
+          return;
         }
       }
       //start game
       else if (parsedMessage.getType() == StartGameModel.name) {
-        if (!selectedRoom || (<Room>selectedRoom).hasGameStarted) {
+        if (!selectedRoom || selectedRoom.hasGameStarted) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+          return;
         }
         if (!(<Room>selectedRoom).startGame()) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+          return;
         }
       }
+
       //play move
       else if (parsedMessage.getType() == PlayMoveModel.name) {
-        
+        if (!selectedRoom || !selectedRoom.hasGameStarted) {
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+          return;
+        }
+        let player = selectedRoom.getPlayerManager().getPlayer(socket);
+        if (!selectedRoom.playGameAction(player, parsedMessage as PlayMoveModel)) {
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+          return;
+        }
       }
+
+      //sync player hand
+      else if (parsedMessage.getType() == RequestPlayerSyncModel.name) {
+        if (!selectedRoom || !selectedRoom.hasGameStarted) {
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+        }
+        let player = selectedRoom.getPlayerManager().getPlayer(socket);
+        if (!player.resyncPlayer()) {
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+          return;
+        }
+      }
+
 
       socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
     } catch (e) {
