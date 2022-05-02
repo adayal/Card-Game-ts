@@ -47,6 +47,13 @@ export class Room {
     return this.game.startGame(this.playerManager);
   }
 
+  getHasGameStarted(): boolean {
+    if (this.game) {
+      return this.game.hasGameStarted();
+    }
+    return false;
+  }
+
   playGameAction(player: Player, playerMove: PlayMoveModel) {
     return this.game.evaluateRules(player, playerMove)
   }

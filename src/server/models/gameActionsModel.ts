@@ -101,7 +101,7 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
 
 export class WaitingForActionModel extends ParsableModels implements ActionModel {
   modelName = 'WaitingAction';
-  static properties: ['playerNumber', 'actionName'];
+  static properties: string[] = ['playerNumber', 'actionName'];
   private _playerNumber: number;
   private _actionName: string;
 
@@ -131,7 +131,7 @@ export class WaitingForActionModel extends ParsableModels implements ActionModel
 //Request the server to rsync player data
 export class RequestPlayerSyncModel extends ParsableModels implements ActionModel {
   modelName = "RequestPlayerSyncModel";
-  static properties: ['playerNumber'];
+  static properties: string[] = ['playerNumber'];
   private _playerNumber: Number;
 
   constructor() {
@@ -185,6 +185,11 @@ export class SyncPlayerModel {
       return this;
     }
 
+    public unsetForceSync() {
+      this._forceSync = false;
+      return this;
+    }
+
     public getJsonObject() {
       //foreach player hand, convert the cards to a card json object
       //hack to get around circular reference error
@@ -205,7 +210,7 @@ export class SyncPlayerModel {
     private getCardJsonObject(cards: Card[] | null) {
       let convertCardsToObjects: Object[] = [];
       cards?.forEach((card) => {
-        convertCardsToObjects.push(card.getJsonObject());
+        convertCardsToObjects.push((<Card>card).getJsonObject());
       })
       return convertCardsToObjects;
     }

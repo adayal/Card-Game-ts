@@ -320,14 +320,20 @@ export class SaathAath extends GameRulesAbstract {
 
     private discardHalfDeck() {
         let deck = this._deck.getDeck();
-        for (let i = 0; i < deck.length; i++) {
+        let currLength = deck.length;
+        for (let i = 0; i < currLength; i++) {
             if (deck[i].value >= 2 && deck[i].value < 7) {
                 this._deck.discardCard(deck[i]);
+                if (i > 0) i--;
+                currLength = deck.length;
             }
             if (deck[i].value == 7 && ([Card._SUITES.DIAMONDS, Card._SUITES.CLUBS].indexOf(deck[i].suite) != -1)) {
                 this._deck.discardCard(deck[i]);
+                if (i > 0) i--;
+                currLength = deck.length;
             }
         }
+        this._deck.discardCard(deck[0]);
     }
     
 }

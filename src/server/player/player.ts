@@ -159,23 +159,16 @@ export class Player {
         return found;
     }
 
-    getCardFromHand(card: Card | null, value: string, suite: string): Card | undefined {
+    getCardFromHand(card: Card, value: string, suite: string): Card | undefined {
         let cardFound = undefined;
-        if (card) {
-            cardFound = this._hand.find((x) => {
-                x.isEqual(card);
-            }) || this._openField.find((x) => {
-                x.isEqual(card)
-            });
-            return cardFound;
-        }
-        
         cardFound = this._hand.find((x) => {
-            x.name == value && x.suite == suite
-        }) || this._openField.find((x) => {
-            x.name == value && x.suite == suite
+            return x.isEqual(card);
         });
-
+        if (!cardFound) {
+            cardFound = this._openField.find((x) => {
+                return x.isEqual(card);
+            });
+        }
         return cardFound;
     }
 
@@ -189,6 +182,7 @@ export class Player {
         
         let message = this._lastSentMessage.forceSync().getJsonObject();
         this.sendToPlayer(CONSTANTS.ACTIONS.UPDATE_PLAYER, message);
+        this._lastSentMessage.unsetForceSync();
         return true;
     }
 }

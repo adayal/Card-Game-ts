@@ -91,7 +91,7 @@ export class Server {
       }
       //start game
       else if (parsedMessage.getType() == StartGameModel.name) {
-        if (!selectedRoom || selectedRoom.hasGameStarted) {
+        if (!selectedRoom || selectedRoom.getHasGameStarted()) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
           return;
         }
@@ -103,7 +103,7 @@ export class Server {
 
       //play move
       else if (parsedMessage.getType() == PlayMoveModel.name) {
-        if (!selectedRoom || !selectedRoom.hasGameStarted) {
+        if (!selectedRoom || !selectedRoom.getHasGameStarted()) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
           return;
         }
@@ -116,7 +116,7 @@ export class Server {
 
       //sync player hand
       else if (parsedMessage.getType() == RequestPlayerSyncModel.name) {
-        if (!selectedRoom || !selectedRoom.hasGameStarted) {
+        if (!selectedRoom || !selectedRoom.getHasGameStarted()) {
           socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
         }
         let player = selectedRoom.getPlayerManager().getPlayer(socket);
