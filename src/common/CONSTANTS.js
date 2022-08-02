@@ -80,7 +80,8 @@ export default Object.freeze({
     },
     APP_PATH: {
         LIST_ROOMS: 'listRooms',
-        CREATE_ROOM: 'createRoom'
+        CREATE_ROOM: 'createRoom',
+        SOCKET_PATH: "http://localhost:3001/"
     },
     CLIENT_ACTIONS: {
         UPDATE_ROOM_LIST: 'UPDATE_ROOM_LIST'

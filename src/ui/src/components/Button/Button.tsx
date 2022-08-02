@@ -3,20 +3,16 @@ import { Link } from 'react-router-dom';
 
 interface Props {
     name: string;
-    route: string;
+    route?: string;
+    onclick?: any;
 }
 
 export class Button extends React.Component<Props> {
-
     render() {
         return (
-            <Link to={this.props.route}>
-                <button>
-                    {this.props.name}
-                </button>
-            </Link>
+            <button onClick={this.props.onclick}>
+                {this.props.name}
+            </button>
         );
     }
 }
-
-export default Button;

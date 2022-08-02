@@ -11,7 +11,8 @@ export const AppRouter: React.FunctionComponent = () => {
   return (
     <HashRouter>
       <React.Fragment>
-          <Route path='/'  />
+          <switch>
+          </switch>
       </React.Fragment>
     </HashRouter>
   );

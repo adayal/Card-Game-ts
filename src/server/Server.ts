@@ -30,20 +30,24 @@ export class Server {
   }
   
   private createApp(): void {
+    console.log("creating app");
     this.app = express();
     this.app.use(cors());
     this.app.get('/', (req, res) => res.sendFile(__dirname + '../ui/public/index.html'));
   }
 
   private createServer(): void {
+    console.log("creating http server");
     this.server = http.createServer(this.app);
   }
 
   private config(): void {
+    console.log("setting config");
     this.port = process.env.PORT || Server.PORT;
   }
 
   private sockets(): void {
+    console.log("setting up sockets");
     this.io = require("socket.io").listen(this.server, { origins: '*:*'});
   }
 
@@ -66,6 +70,8 @@ export class Server {
   }
 
   private handleMessage(msg: any, socket: any): any {
+    console.log(msg);
+    console.log(socket);
     try {
       let selectedRoom = this.roomManager.getRoomBySocket(socket);
       let parsedMessage = this.parser.parseMessage(new Message(msg));

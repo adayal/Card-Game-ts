@@ -193,7 +193,6 @@ export class SyncPlayerModel {
     public getJsonObject() {
       //foreach player hand, convert the cards to a card json object
       //hack to get around circular reference error
-      let temp = this.getCardJsonObject(this._playerHand);
       return {
         playerHand: this.getCardJsonObject(this._playerHand),
         playerOpenField: this.getCardJsonObject(this._playerOpenField),
