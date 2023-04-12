@@ -60,7 +60,7 @@ export class Server {
       console.log("Connected client on port %s.", this.port);
       
       socket.on("message", (msg: any) => {
-        this.handleMessage(msg, socket);
+        this.handleMessage(new Message(msg), socket);
       })
 
       socket.on("disconnect", () => {
@@ -69,7 +69,18 @@ export class Server {
     });
   }
 
-  private handleMessage(msg: any, socket: any): any {
+  private handleMessage(msg: Message, socket: any): any {
+    try {
+      let parsedMessage = this.parser.parseMessage(msg);
+      this.roomManager.handleIncomingRoomMessage(parsedMessage, socket);
+      socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
+    } catch (e) {
+      console.log(e);
+      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+    }
+  }
+
+  private handleMessage2(msg: any, socket: any): any {
     console.log(msg);
     console.log(socket);
     try {
