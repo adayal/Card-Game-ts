@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import constants from '../../common/CONSTANTS'
 import { Button } from './components/Button'
-import { Server, Socket } from "socket.io"
+var io = require("socket.io");
 
 class App extends React.Component<{}, any> {
   constructor() {
