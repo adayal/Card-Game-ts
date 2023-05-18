@@ -18,7 +18,8 @@ export class SuccessModel implements SuccessInterface {
 
     toJson(): any {
         return {
-            messageId: this.rawMessage.messageId,
+            messageId: this.rawMessage?.messageId,
+            commandName: this.rawMessage?.commandName,
             successMessage: this.successMessage,
         };
     }

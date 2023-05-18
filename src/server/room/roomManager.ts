@@ -48,12 +48,14 @@ export class RoomManager {
   playMoveInGame(playRoom: PlayMoveModel, socket: any): void {
     let selectedRoom = this.getRoomBySocket(socket);
     if (!selectedRoom || !selectedRoom.getHasGameStarted()) {
-      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+      let error = new ErrorModel(undefined, CONSTANTS.CLIENT_MSG.ERROR_ILLEGAL_MOVE).toJson();
+      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, error);
       return;
     }
     let player = selectedRoom.getPlayerManager().getPlayer(socket);
     if (!selectedRoom.playGameAction(player, playRoom)) {
-      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+      let error = new ErrorModel(undefined, CONSTANTS.CLIENT_MSG.ERROR_ILLEGAL_MOVE).toJson();
+      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, error);
       return;
     }
   }

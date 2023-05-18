@@ -147,6 +147,7 @@ export class SaathAath extends GameRulesAbstract {
         this._trumpType = move.getAction().getPickedTrump();
         this._playerManager.sendToAllPlayers(CONSTANTS.CLIENT_MSG.PICKED_TRUMP, {pickedTrump: this._trumpType});
 
+        this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PLAY_CARD, new Message(null));
         //deal 5 cards face down and then 5 cards face up to each player
         let dealCards = 
             this.dealCardsToPlayer(0, 5, true, true) && 
@@ -154,7 +155,6 @@ export class SaathAath extends GameRulesAbstract {
             this.dealCardsToPlayer(0, 5, true, false) && 
             this.dealCardsToPlayer(1, 5, true, false); 
         
-        this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PLAY_CARD, new Message(null));
         (<Player>this._playerManager.getPlayerByNumber(0)).sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
         return dealCards;
     }

@@ -26,12 +26,12 @@ export class Message implements MessageInterface {
             this.properties = [];
             return this;
         }
-        this.properties = ['commandName', 'objectType', 'objectData', 'socket', 'message_id'];
+        this.properties = ['commandName', 'objectType', 'objectData', 'messageId'];
         if (this.isValidMessage(message)) {
             this.commandName = message.commandName;
             this.objectType = message.objectType;
             this.objectData = message.objectData;
-            this.messageId = message.Id;
+            this.messageId = message.messageId;
             return this;
         }
         throw new Error("PARSER ERROR");

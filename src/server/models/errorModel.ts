@@ -8,20 +8,22 @@ export interface ErrorInterface {
 
 export class ErrorModel implements ErrorInterface {
     modelName = 'ErrorModel';
-    rawMessage: Message;
-    errorMessage: string;
+    rawMessage: Message | null;
+    errorMessage: string | null;
     errorCode:number;
     rawException:any;
 
 
-    constructor(rawMessage: Message, rawException: any) {
-        this.rawMessage = rawMessage;
-        this.rawException = rawException;
+    constructor(rawMessage?: Message, rawException?: any) {
+        this.rawMessage = rawMessage ?? null;
+        this.rawException = rawException ?? null;
+
     }
+
 
     toJson(): any {
         return {
-            messageId: this.rawMessage.messageId,
+            messageId: this.rawMessage?.messageId,
             errorMessage: this.errorMessage,
             errorCode: this.errorCode
         };
