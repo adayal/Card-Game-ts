@@ -1,7 +1,7 @@
 {
     "meta": {
-        "__export_time": 1636530172414,
-        "__export_app": "firecamp_v2.3.1 ",
+        "__export_time": 1684385851610,
+        "__export_app": "firecamp_v2.7.1 ",
         "__export_version": 1
     },
     "project": {
@@ -48,7 +48,8 @@
                 "reconnection": true,
                 "reconnectionAttempts": 3,
                 "reconnectionDelay": 1000,
-                "reconnectionDelayMax": 5000
+                "reconnectionDelayMax": 5000,
+                "on_connect_listeners": []
             },
             "connections": [
                 {
@@ -91,7 +92,9 @@
                 "UPDATE_PLAYER",
                 "GENERIC_ERROR",
                 "ROOM_NOT_JOINED",
-                "ALREADY_JOINED_ROOM"
+                "ALREADY_JOINED_ROOM",
+                "ACKNOWLEDGED_LIST_ROOM",
+                "YOUR_TURN"
             ],
             "emitter_collection": [
                 {
@@ -102,15 +105,14 @@
                                 "type": "json",
                                 "envelope": ""
                             },
-                            "payload": "{\n    \"commandName\": \"CREATE_ROOM\",\n    \"objectType\": \"CreateRoomModel\",\n    \"objectData\": {\n        \"roomName\": \"{{roomName}}\",\n        \"gameName\": \"{{gameName}}\",\n        \"password\": \"{{roomPassword}}\",\n        \"playerName\": \"test02\"\n    }\n}"
+                            "payload": "{\n    \"messageId\": \"abc\",\n    \"commandName\": \"CREATE_ROOM\",\n    \"objectType\": \"CreateRoomModel\",\n    \"objectData\": {\n        \"roomName\": \"someRandomName\",\n        \"gameName\": \"SaathAath\",\n        \"password\": \"none\",\n        \"playerName\": \"test02\"\n    }\n}"
                         }
                     ],
                     "meta": {
                         "label": "Create Room ",
                         "interval": "",
                         "ack": false
-                    },
-                    "path": "./d"
+                    }
                 },
                 {
                     "name": "message",
@@ -120,7 +122,7 @@
                                 "type": "json",
                                 "envelope": ""
                             },
-                            "payload": "{\n    \"commandName\": \"START_GAME\",\n    \"objectType\": \"StartGameModel\",\n    \"objectData\": {\n        \"startGame\":true\n    }\n}"
+                            "payload": "{\r\n    \"commandName\": \"START_GAME\",\r\n    \"objectType\": \"StartGameModel\",\r\n    \"objectData\": {\r\n        \"startGame\":true\r\n    },\r\n    \"messageId\": \"123\"\r\n}"
                         }
                     ],
                     "meta": {
@@ -137,7 +139,7 @@
                                 "type": "json",
                                 "envelope": ""
                             },
-                            "payload": "{\n    \"commandName\": \"JOIN_ROOM\",\n    \"objectType\": \"JoinRoomModel\",\n    \"objectData\": {\n        \"roomName\": \"{{roomName}}\",\n        \"password\": \"{{roomPassword}}\",\n        \"playerName\": \"test01\"\n    }\n}"
+                            "payload": "{\n    \"commandName\": \"JOIN_ROOM\",\n    \"objectType\": \"JoinRoomModel\",\n    \"objectData\": {\n        \"roomName\": \"someRandomName\",\n        \"password\": \"none\",\n        \"playerName\": \"test01\"\n    },\n    \"message_id\": \"abc123\"\n}"
                         }
                     ],
                     "meta": {
@@ -154,7 +156,7 @@
                                 "type": "json",
                                 "envelope": ""
                             },
-                            "payload": "{\n    \"commandName\": \"PLAYER_MOVE_ACTION\",\n    \"objectType\": \"PlayMoveModel\",\n    \"objectData\": {\n        \"playerNumber\": \"0\",\n        \"action\": {\n            \"commandName\": \"PLAYER_MOVE_ACTION\",\n            \"objectType\": \"ActionPlayModel\",\n            \"objectData\": {\n                \"pickedTrump\": \"HEARTS\"\n            }\n        }, \n        \"actionName\": \"test01\"\n    }\n}"
+                            "payload": "{\r\n    \"messageId\": \"abc123\",\r\n    \"commandName\": \"PLAYER_MOVE_ACTION\",\r\n    \"objectType\": \"PlayMoveModel\",\r\n    \"objectData\": {\r\n        \"playerNumber\": \"0\",\r\n        \"action\": {\r\n            \"commandName\": \"PLAYER_MOVE_ACTION\",\r\n            \"objectType\": \"ActionPlayModel\",\r\n            \"objectData\": {\r\n                \"pickedTrump\": \"HEARTS\"\r\n            },\r\n            \"messageId\": \"actionId123\"\r\n        }, \r\n        \"actionName\": \"test01\"\r\n    }\r\n}"
                         }
                     ],
                     "meta": {
@@ -162,24 +164,60 @@
                         "interval": "",
                         "ack": false
                     }
+                },
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\r\n    \"commandName\": \"LIST_ROOMS\",\r\n    \"objectType\": \"ListRoomModel\",\r\n    \"objectData\": {\r\n    },\r\n    \"messageId\": \"123\"\r\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "LIST_ROOMS",
+                        "interval": "",
+                        "ack": false
+                    }
+                },
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\r\n    \"commandName\": \"UPDATE_PLAYER\",\r\n    \"objectType\": \"RequestPlayerSyncModel\",\r\n    \"objectData\": {\r\n        \"playerNumber\": 0\r\n    },\r\n    \"messageId\": \"abc123\"\r\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "Update Player",
+                        "interval": "",
+                        "ack": false
+                    }
+                },
+                {
+                    "name": "message",
+                    "body": [
+                        {
+                            "meta": {
+                                "type": "json",
+                                "envelope": ""
+                            },
+                            "payload": "{\r\n    \"commandName\": \"PLAYER_MOVE_ACTION\",\r\n    \"objectType\": \"PlayMoveModel\",\r\n    \"objectData\": {\r\n        \"playerNumber\": 0,\r\n        \"action\": {\r\n            \"commandName\": \"PLAYER_MOVE_ACTION\",\r\n            \"objectType\": \"ActionPlayModel\",\r\n            \"objectData\": {\r\n                \"playedCard\":  {\r\n                    \"name\": \"ACE\",\r\n                    \"suite\": \"SPADES\"\r\n                }\r\n            }\r\n        }, \r\n        \"actionName\": \"PLAY_CARD\"\r\n    }\r\n}"
+                        }
+                    ],
+                    "meta": {
+                        "label": "Play Card",
+                        "interval": "",
+                        "ack": false
+                    }
                 }
             ]
         }
     ],
-    "environments": [
-        {
-            "name": "Development",
-            "variables": {
-                "gameName": "SaathAath",
-                "roomName": "testRoom4",
-                "roomPassword": "roomPassword1"
-            }
-        },
-        {
-            "name": "Production",
-            "variables": {
-                "variable_name": "variable_value"
-            }
-        }
-    ]
+    "environments": []
 }
