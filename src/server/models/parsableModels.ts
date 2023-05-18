@@ -4,11 +4,14 @@ export abstract class ParsableModels {
     model: any;
     properties: string[];
 
-    abstract parse(message: Message): any;
+    rawMessage: Message;
 
-    constructor(objectType: string, properties: string[]) {
+    abstract parse(): any;
+
+    constructor(objectType: string, properties: string[], rawMessage: Message) {
         this.model = objectType;
         this.properties = properties;
+        this.rawMessage = rawMessage;
     }
 
     getType() {

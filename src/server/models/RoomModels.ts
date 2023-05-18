@@ -1,6 +1,6 @@
 import { Message } from "./message";
-import { ParsableModels } from "./parsableModels";
 import { ActionInterface } from './actionModel';
+import { ParsableModels } from "./parsableModels";
 
 
 export class CreateRoomModel extends ParsableModels implements ActionInterface {
@@ -12,16 +12,16 @@ export class CreateRoomModel extends ParsableModels implements ActionInterface {
     password: string;
     playerName: string;
 
-    constructor() {
-        super(CreateRoomModel.name, CreateRoomModel.properties);
+    constructor(rawMessage: Message) {
+        super(CreateRoomModel.name, CreateRoomModel.properties, rawMessage);
     }
 
-    parse(message: Message) {
-      this.isValidModel(message);
-      this.roomName = message.objectData.roomName;
-      this.gameName = message.objectData.gameName;
-      this.password = message.objectData.password;
-      this.playerName = message.objectData.playerName;
+    parse() {
+      this.isValidModel(this.rawMessage);
+      this.roomName = this.rawMessage.objectData.roomName;
+      this.gameName = this.rawMessage.objectData.gameName;
+      this.password = this.rawMessage.objectData.password;
+      this.playerName = this.rawMessage.objectData.playerName;
       
       return this;
     }
@@ -35,15 +35,15 @@ export class JoinRoomModel extends ParsableModels implements ActionInterface {
   password: string;
   playerName: string;
 
-  constructor() {
-    super(JoinRoomModel.name, JoinRoomModel.properties);
+  constructor(rawMessage: Message) {
+    super(JoinRoomModel.name, JoinRoomModel.properties, rawMessage);
   }
 
-  parse(message: Message) {
-    this.isValidModel(message);
-    this.roomName = message.objectData.roomName;
-    this.password = message.objectData.password;
-    this.playerName = message.objectData.playerName;
+  parse() {
+    this.isValidModel(this.rawMessage);
+    this.roomName = this.rawMessage.objectData.roomName;
+    this.password = this.rawMessage.objectData.password;
+    this.playerName = this.rawMessage.objectData.playerName;
 
     return this;
   }
@@ -52,12 +52,12 @@ export class JoinRoomModel extends ParsableModels implements ActionInterface {
 export class ListRoomModel extends ParsableModels implements ActionInterface {
   modelName = 'ListRoomModel';
   static properties: string[] = [];
-  constructor() {
-    super(ListRoomModel.name, ListRoomModel.properties);
+  constructor(rawMessage: Message) {
+    super(ListRoomModel.name, ListRoomModel.properties, rawMessage);
   }
 
-  parse(message: Message) {
-    this.isValidModel(message);
+  parse() {
+    this.isValidModel(this.rawMessage);
     return this;
   }
 }

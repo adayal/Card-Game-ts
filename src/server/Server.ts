@@ -74,10 +74,10 @@ export class Server {
     try {
       let parsedMessage = this.parser.parseMessage(msg);
       this.roomManager.handleIncomingRoomMessage(parsedMessage, socket);
-      socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
+      socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, msg.toSuccess().toJson());
     } catch (e) {
       console.log(e);
-      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, msg.toError(e).toJson());
     }
   }
 

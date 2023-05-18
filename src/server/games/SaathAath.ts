@@ -1,5 +1,6 @@
 import CONSTANTS from "../../common/CONSTANTS";
 import { PlayMoveModel, WaitingForActionModel } from "../models/gameActionsModel";
+import { Message } from "../models/message";
 import { Player } from "../player/player";
 import { PlayerManager } from "../player/playerManager";
 import { Card } from "./CardGames/Card";
@@ -57,7 +58,7 @@ export class SaathAath extends GameRulesAbstract {
         if (didDeal) {
 
             //set wait action lock
-            this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PICKED_TRUMP);
+            this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PICKED_TRUMP, new Message(null));
             
             //set turn counter to 0
             this._turnCounter = 0;
@@ -153,7 +154,7 @@ export class SaathAath extends GameRulesAbstract {
             this.dealCardsToPlayer(0, 5, true, false) && 
             this.dealCardsToPlayer(1, 5, true, false); 
         
-        this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PLAY_CARD);
+        this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PLAY_CARD, new Message(null));
         (<Player>this._playerManager.getPlayerByNumber(0)).sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
         return dealCards;
     }
@@ -233,13 +234,13 @@ export class SaathAath extends GameRulesAbstract {
                 this._field = [];
 
                 //wait for winner's turn
-                this._waitingForAction = new WaitingForActionModel(winner.getPlayerNumber(), this._actionNames.PLAY_CARD);
+                this._waitingForAction = new WaitingForActionModel(winner.getPlayerNumber(), this._actionNames.PLAY_CARD, new Message());
                 winner.sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
             }
         } else {
             this._field.push(playedCard);
             this._turnCounter = otherPlayer.getPlayerNumber();
-            this._waitingForAction = new WaitingForActionModel(otherPlayer.getPlayerNumber(), this._actionNames.PLAY_CARD);
+            this._waitingForAction = new WaitingForActionModel(otherPlayer.getPlayerNumber(), this._actionNames.PLAY_CARD, new Message());
             otherPlayer.sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
         }
 

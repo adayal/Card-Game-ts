@@ -9,13 +9,13 @@ export class StartGameModel extends ParsableModels implements ActionModel {
     static properties: string[] = ['startGame'];
     startGame: boolean;
 
-    constructor() {
-      super(StartGameModel.name, StartGameModel.properties);
+    constructor(rawMessage: Message) {
+      super(StartGameModel.name, StartGameModel.properties, rawMessage);
     }
 
-    parse(message: Message) {
-      this.isValidModel(message);
-      this.startGame = message.objectData.startGame;
+    parse() {
+      this.isValidModel(this.rawMessage);
+      this.startGame = this.rawMessage.objectData.startGame;
 
       return this;
     }
@@ -38,9 +38,9 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
   static properties: string[] = ['playerNumber', 'actionName', 'action'];
   
 
-  constructor() {
-    super(PlayMoveModel.name, PlayMoveModel.properties);
-    this._action = new ActionPlayModel();
+  constructor(rawMessage: Message) {
+    super(PlayMoveModel.name, PlayMoveModel.properties, rawMessage);
+    this._action = new ActionPlayModel(new Message(this.rawMessage.objectData.action));
   }
 
   getPlayerNumber(): number{
@@ -55,17 +55,17 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
     return this._action;
   }
 
-  parse(message: Message) {
-    this.isValidModel(message);
-    this._action.parse(new Message(message.objectData.action));
-    this._playerNumber = message.objectData.playerNumber;
-    this._actionName = message.objectData.actionName;
+  parse() {
+    this.isValidModel(this.rawMessage);
+    this._action.parse();
+    this._playerNumber = this.rawMessage.objectData.playerNumber;
+    this._actionName = this.rawMessage.objectData.actionName;
 ``
     return this;
   }
 
   getWaiterRepresentation(): WaitingForActionModel {
-    return new WaitingForActionModel(this._playerNumber, this._actionName)
+    return new WaitingForActionModel(this._playerNumber, this._actionName, new Message(null))
   }
 }
 
@@ -77,16 +77,16 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
   private _offerDraw: boolean;
   private _offerResign: boolean;
   
-  constructor() {
-    super(ActionPlayModel.name, ActionPlayModel.properties);
+  constructor(rawMessage: Message) {
+    super(ActionPlayModel.name, ActionPlayModel.properties, rawMessage);
   }
 
-  parse(message: Message) {
-    this.isValidModel(message, true);
-    this._offerDraw = message.objectData.offerDraw ?? false;
-    this._offerResign = message.objectData.offerResign ?? false;
-    this._pickedTrump = message.objectData.pickedTrump;
-    this._playedCard = message.objectData.playedCard ?? null;
+  parse() {
+    this.isValidModel(this.rawMessage, true);
+    this._offerDraw = this.rawMessage.objectData.offerDraw ?? false;
+    this._offerResign = this.rawMessage.objectData.offerResign ?? false;
+    this._pickedTrump = this.rawMessage.objectData.pickedTrump;
+    this._playedCard = this.rawMessage.objectData.playedCard ?? null;
     return this;
   }
 
@@ -105,17 +105,17 @@ export class WaitingForActionModel extends ParsableModels implements ActionModel
   private _playerNumber: number;
   private _actionName: string;
 
-  constructor(playerNumber: number, actionName: string) {
-    super(WaitingForActionModel.name, WaitingForActionModel.properties);
+  constructor(playerNumber: number, actionName: string, rawMessage: Message) {
+    super(WaitingForActionModel.name, WaitingForActionModel.properties, rawMessage);
     this._playerNumber = playerNumber;
     this._actionName = actionName;
   }
   
-  parse(message: Message) {
-    this.isValidModel(message);
+  parse() {
+    this.isValidModel(this.rawMessage);
     
-    this._playerNumber = message.objectData.playerNumber;
-    this._actionName = message.objectData.actionName;
+    this._playerNumber = this.rawMessage.objectData.playerNumber;
+    this._actionName = this.rawMessage.objectData.actionName;
     return this;
   }
 
@@ -134,13 +134,13 @@ export class RequestPlayerSyncModel extends ParsableModels implements ActionMode
   static properties: string[] = ['playerNumber'];
   private _playerNumber: Number;
 
-  constructor() {
-    super(RequestPlayerSyncModel.name, RequestPlayerSyncModel.properties);
+  constructor(rawMessage: Message) {
+    super(RequestPlayerSyncModel.name, RequestPlayerSyncModel.properties, rawMessage);
   }
 
-  parse(message: Message) {
-    this.isValidModel(message, false);
-    this._playerNumber = message.objectData.playerNumber;
+  parse() {
+    this.isValidModel(this.rawMessage, false);
+    this._playerNumber = this.rawMessage.objectData.playerNumber;
     return this;
   }
 }

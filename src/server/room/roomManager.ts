@@ -1,4 +1,5 @@
 import CONSTANTS from "../../common/CONSTANTS";
+import { ErrorModel } from "../models/errorModel";
 import { PlayMoveModel, RequestPlayerSyncModel, StartGameModel } from "../models/gameActionsModel";
 import { ParsableModels } from "../models/parsableModels";
 import { CreateRoomModel, JoinRoomModel, ListRoomModel } from "../models/RoomModels";
@@ -16,18 +17,24 @@ export class RoomManager {
     switch (model.getType()) {
       case CreateRoomModel.name:
         this.createRoom(<CreateRoomModel>model, socket);
+        break;
       case ListRoomModel.name:
         this.emitAllPublicRoomData(socket);
+        break;
       case JoinRoomModel.name:
         this.joinRoom(<JoinRoomModel> model, socket);
+        break;
       case StartGameModel.name:
         this.startGame(<StartGameModel> model, socket);
+        break;
       case PlayMoveModel.name:
         this.playMoveInGame(<PlayMoveModel> model, socket);
+        break;
       case RequestPlayerSyncModel.name:
         this.playerSync(<RequestPlayerSyncModel> model, socket);
+        break;
       default:
-        socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+        socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, model.rawMessage.toError().toJson());
     }
   }
 

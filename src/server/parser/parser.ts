@@ -16,22 +16,22 @@ export class Parser implements ParserInterface {
 
     parseMessage(message: Message): ParsableModels {
         if (message.commandName == Constants.default.MSG_TYPES.CREATE_ROOM) {
-            return new CreateRoomModel().parse(message);
+            return new CreateRoomModel(message).parse();
         }
         else if (message.commandName == Constants.default.MSG_TYPES.LIST_ROOMS) {
-            return new ListRoomModel().parse(message);
+            return new ListRoomModel(message).parse();
         }
         else if (message.commandName == Constants.default.MSG_TYPES.JOIN_ROOM) {
-            return new JoinRoomModel().parse(message);
+            return new JoinRoomModel(message).parse();
         }
         else if (message.commandName == Constants.default.MSG_TYPES.START_GAME) {
-            return new StartGameModel().parse(message);
+            return new StartGameModel(message).parse();
         }
         else if (message.commandName == Constants.default.ACTIONS.PLAYER_MOVE_ACTION) {
-            return new PlayMoveModel().parse(message);
+            return new PlayMoveModel(message).parse();
         }
         else if (message.commandName == Constants.default.ACTIONS.UPDATE_PLAYER) {
-            return new RequestPlayerSyncModel().parse(message);
+            return new RequestPlayerSyncModel(message).parse();
         }
 
         throw Error("Not a parsable model");

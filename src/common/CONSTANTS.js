@@ -85,5 +85,8 @@ export default Object.freeze({
     },
     CLIENT_ACTIONS: {
         UPDATE_ROOM_LIST: 'UPDATE_ROOM_LIST'
+    },
+    APP_COMMANDS: {
+        NULL_COMMAND: "NULL"
     }
   });
