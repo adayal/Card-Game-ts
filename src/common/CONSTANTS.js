@@ -4,6 +4,7 @@ export default Object.freeze({
     },
     MSG_TYPES: {
         JOIN_ROOM: 'JOIN_ROOM',
+        LIST_ROOMS: 'LIST_ROOMS',
         DISCONNECT: 'DISCONNECT',
         PLAY_CARD: 'PLAY_CARD',
         START_GAME: 'START_GAME',
@@ -58,7 +59,8 @@ export default Object.freeze({
         LOCAL_LOSER: "LOCAL_LOSER",
         SEND_CURRENT_HAND: "SEND_CURRENT_HAND",
         DO_ACTION: "DO_ACTION",
-        YOUR_TURN: "YOUR_TURN"
+        YOUR_TURN: "YOUR_TURN",
+        ACKNOWLEDGED_LIST_ROOM: "ACKNOWLEDGED_LIST_ROOM"
     },
     POSSIBLE_ACTIONS: {
         PLAY_CARD: "PLAY_CARD",
@@ -72,5 +74,19 @@ export default Object.freeze({
         DIAMOND: "DIAMOND",
         HEART: "HEART",
         SPADE: "SPADE"
+    },
+    LOCALSTORAGE: {
+        GET_USERNAME: "GET_USERNAME"
+    },
+    APP_PATH: {
+        LIST_ROOMS: 'listRooms',
+        CREATE_ROOM: 'createRoom',
+        SOCKET_PATH: "http://localhost:3001/"
+    },
+    CLIENT_ACTIONS: {
+        UPDATE_ROOM_LIST: 'UPDATE_ROOM_LIST'
+    },
+    APP_COMMANDS: {
+        NULL_COMMAND: "NULL"
     }
   });

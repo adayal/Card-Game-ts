@@ -64,4 +64,8 @@ export class PlayerManager {
             x.sendToPlayer(msgType, msg);
         });
     }
+
+    getPlayerCount() {
+        return this.players.length;
+    }
 }

@@ -11,12 +11,12 @@ export class ActionModel extends ParsableModels implements ActionInterface {
     modelName = 'ActionModel';
     static properties: string[];
 
-    constructor() {
-        super('ActionModel', []);
+    constructor(rawMessage: Message) {
+        super('ActionModel', [], rawMessage);
     }
 
-    parse(message: Message) {
-        this.isValidModel(message);
+    parse() {
+        this.isValidModel(this.rawMessage);
         return this;
     }
 }

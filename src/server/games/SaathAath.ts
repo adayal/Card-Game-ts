@@ -1,5 +1,6 @@
 import CONSTANTS from "../../common/CONSTANTS";
 import { PlayMoveModel, WaitingForActionModel } from "../models/gameActionsModel";
+import { Message } from "../models/message";
 import { Player } from "../player/player";
 import { PlayerManager } from "../player/playerManager";
 import { Card } from "./CardGames/Card";
@@ -57,7 +58,7 @@ export class SaathAath extends GameRulesAbstract {
         if (didDeal) {
 
             //set wait action lock
-            this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PICKED_TRUMP);
+            this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PICKED_TRUMP, new Message(null));
             
             //set turn counter to 0
             this._turnCounter = 0;
@@ -146,6 +147,7 @@ export class SaathAath extends GameRulesAbstract {
         this._trumpType = move.getAction().getPickedTrump();
         this._playerManager.sendToAllPlayers(CONSTANTS.CLIENT_MSG.PICKED_TRUMP, {pickedTrump: this._trumpType});
 
+        this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PLAY_CARD, new Message(null));
         //deal 5 cards face down and then 5 cards face up to each player
         let dealCards = 
             this.dealCardsToPlayer(0, 5, true, true) && 
@@ -153,7 +155,6 @@ export class SaathAath extends GameRulesAbstract {
             this.dealCardsToPlayer(0, 5, true, false) && 
             this.dealCardsToPlayer(1, 5, true, false); 
         
-        this._waitingForAction = new WaitingForActionModel(0, this._actionNames.PLAY_CARD);
         (<Player>this._playerManager.getPlayerByNumber(0)).sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
         return dealCards;
     }
@@ -233,13 +234,13 @@ export class SaathAath extends GameRulesAbstract {
                 this._field = [];
 
                 //wait for winner's turn
-                this._waitingForAction = new WaitingForActionModel(winner.getPlayerNumber(), this._actionNames.PLAY_CARD);
+                this._waitingForAction = new WaitingForActionModel(winner.getPlayerNumber(), this._actionNames.PLAY_CARD, new Message());
                 winner.sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
             }
         } else {
             this._field.push(playedCard);
             this._turnCounter = otherPlayer.getPlayerNumber();
-            this._waitingForAction = new WaitingForActionModel(otherPlayer.getPlayerNumber(), this._actionNames.PLAY_CARD);
+            this._waitingForAction = new WaitingForActionModel(otherPlayer.getPlayerNumber(), this._actionNames.PLAY_CARD, new Message());
             otherPlayer.sendToPlayer(CONSTANTS.CLIENT_MSG.YOUR_TURN, null);
         }
 
@@ -320,14 +321,20 @@ export class SaathAath extends GameRulesAbstract {
 
     private discardHalfDeck() {
         let deck = this._deck.getDeck();
-        for (let i = 0; i < deck.length; i++) {
+        let currLength = deck.length;
+        for (let i = 0; i < currLength; i++) {
             if (deck[i].value >= 2 && deck[i].value < 7) {
                 this._deck.discardCard(deck[i]);
+                if (i > 0) i--;
+                currLength = deck.length;
             }
             if (deck[i].value == 7 && ([Card._SUITES.DIAMONDS, Card._SUITES.CLUBS].indexOf(deck[i].suite) != -1)) {
                 this._deck.discardCard(deck[i]);
+                if (i > 0) i--;
+                currLength = deck.length;
             }
         }
+        this._deck.discardCard(deck[0]);
     }
     
 }

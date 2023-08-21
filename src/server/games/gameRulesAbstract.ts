@@ -33,6 +33,10 @@ export abstract class GameRulesAbstract {
             throw new Error(CONSTANTS.CLIENT_MSG.ERROR_ILLEGAL_MOVE);
     }
 
+    hasGameStarted(): boolean {
+        return this._hasGameStarted;
+    }
+
     constructor(gameName: string, gameState: any, actionNames: any) {
         this._turnCounter = 0;
         this._deck = new Deck();

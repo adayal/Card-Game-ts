@@ -9,13 +9,13 @@ export class StartGameModel extends ParsableModels implements ActionModel {
     static properties: string[] = ['startGame'];
     startGame: boolean;
 
-    constructor() {
-      super(StartGameModel.name, StartGameModel.properties);
+    constructor(rawMessage: Message) {
+      super(StartGameModel.name, StartGameModel.properties, rawMessage);
     }
 
-    parse(message: Message) {
-      this.isValidModel(message);
-      this.startGame = message.objectData.startGame;
+    parse() {
+      this.isValidModel(this.rawMessage);
+      this.startGame = this.rawMessage.objectData.startGame;
 
       return this;
     }
@@ -38,8 +38,9 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
   static properties: string[] = ['playerNumber', 'actionName', 'action'];
   
 
-  constructor() {
-    super(PlayMoveModel.name, PlayMoveModel.properties);
+  constructor(rawMessage: Message) {
+    super(PlayMoveModel.name, PlayMoveModel.properties, rawMessage);
+    this._action = new ActionPlayModel(new Message(this.rawMessage.objectData.action));
   }
 
   getPlayerNumber(): number{
@@ -54,18 +55,17 @@ export class PlayMoveModel extends ParsableModels implements ActionModel {
     return this._action;
   }
 
-  parse(message: Message) {
-    this.isValidModel(message);
-    let actionMessage = new ActionPlayModel().parse(<Message>message.objectData.actionMessage);
-    this._playerNumber = message.objectData.playerNumber;
-    this._actionName = message.objectData.actionName;
-    this._action = actionMessage;
-
+  parse() {
+    this.isValidModel(this.rawMessage);
+    this._action.parse();
+    this._playerNumber = this.rawMessage.objectData.playerNumber;
+    this._actionName = this.rawMessage.objectData.actionName;
+``
     return this;
   }
 
   getWaiterRepresentation(): WaitingForActionModel {
-    return new WaitingForActionModel(this._playerNumber, this._actionName)
+    return new WaitingForActionModel(this._playerNumber, this._actionName, new Message(null))
   }
 }
 
@@ -77,16 +77,16 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
   private _offerDraw: boolean;
   private _offerResign: boolean;
   
-  constructor() {
-    super(ActionPlayModel.name, ActionPlayModel.properties);
+  constructor(rawMessage: Message) {
+    super(ActionPlayModel.name, ActionPlayModel.properties, rawMessage);
   }
 
-  parse(message: Message) {
-    this.isValidModel(message);
-    this._offerDraw = message.objectData.offerDraw ?? false;
-    this._offerResign = message.objectData.offerResign ?? false;
-    this._pickedTrump = message.objectData.pickedTrump;
-    this._playedCard = message.objectData.playedCard ?? null;
+  parse() {
+    this.isValidModel(this.rawMessage, true);
+    this._offerDraw = this.rawMessage.objectData.offerDraw ?? false;
+    this._offerResign = this.rawMessage.objectData.offerResign ?? false;
+    this._pickedTrump = this.rawMessage.objectData.pickedTrump;
+    this._playedCard = this.rawMessage.objectData.playedCard ?? null;
     return this;
   }
 
@@ -101,21 +101,21 @@ export class ActionPlayModel extends ParsableModels implements ActionModel {
 
 export class WaitingForActionModel extends ParsableModels implements ActionModel {
   modelName = 'WaitingAction';
-  static properties: ['playerNumber', 'actionName'];
+  static properties: string[] = ['playerNumber', 'actionName'];
   private _playerNumber: number;
   private _actionName: string;
 
-  constructor(playerNumber: number, actionName: string) {
-    super(WaitingForActionModel.name, WaitingForActionModel.properties);
+  constructor(playerNumber: number, actionName: string, rawMessage: Message) {
+    super(WaitingForActionModel.name, WaitingForActionModel.properties, rawMessage);
     this._playerNumber = playerNumber;
     this._actionName = actionName;
   }
   
-  parse(message: Message) {
-    this.isValidModel(message);
+  parse() {
+    this.isValidModel(this.rawMessage);
     
-    this._playerNumber = message.objectData.playerNumber;
-    this._actionName = message.objectData.actionName;
+    this._playerNumber = this.rawMessage.objectData.playerNumber;
+    this._actionName = this.rawMessage.objectData.actionName;
     return this;
   }
 
@@ -125,6 +125,23 @@ export class WaitingForActionModel extends ParsableModels implements ActionModel
 
   isEqual(waiter: WaitingForActionModel) {
     return this._playerNumber == waiter._playerNumber && this._actionName == waiter._actionName;
+  }
+}
+
+//Request the server to rsync player data
+export class RequestPlayerSyncModel extends ParsableModels implements ActionModel {
+  modelName = "RequestPlayerSyncModel";
+  static properties: string[] = ['playerNumber'];
+  private _playerNumber: Number;
+
+  constructor(rawMessage: Message) {
+    super(RequestPlayerSyncModel.name, RequestPlayerSyncModel.properties, rawMessage);
+  }
+
+  parse() {
+    this.isValidModel(this.rawMessage, false);
+    this._playerNumber = this.rawMessage.objectData.playerNumber;
+    return this;
   }
 }
 
@@ -168,10 +185,14 @@ export class SyncPlayerModel {
       return this;
     }
 
+    public unsetForceSync() {
+      this._forceSync = false;
+      return this;
+    }
+
     public getJsonObject() {
       //foreach player hand, convert the cards to a card json object
       //hack to get around circular reference error
-      let temp = this.getCardJsonObject(this._playerHand);
       return {
         playerHand: this.getCardJsonObject(this._playerHand),
         playerOpenField: this.getCardJsonObject(this._playerOpenField),
@@ -188,7 +209,7 @@ export class SyncPlayerModel {
     private getCardJsonObject(cards: Card[] | null) {
       let convertCardsToObjects: Object[] = [];
       cards?.forEach((card) => {
-        convertCardsToObjects.push(card.getJsonObject());
+        convertCardsToObjects.push((<Card>card).getJsonObject());
       })
       return convertCardsToObjects;
     }

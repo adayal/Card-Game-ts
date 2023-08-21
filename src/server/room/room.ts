@@ -47,7 +47,28 @@ export class Room {
     return this.game.startGame(this.playerManager);
   }
 
+  getHasGameStarted(): boolean {
+    if (this.game) {
+      return this.game.hasGameStarted();
+    }
+    return false;
+  }
+
   playGameAction(player: Player, playerMove: PlayMoveModel) {
     return this.game.evaluateRules(player, playerMove)
+  }
+
+  getPlayerManager(): PlayerManager {
+    return this.playerManager;
+  }
+
+  getPublicData() {
+    return {
+      hasGameStarted: this.hasGameStarted,
+      roomName: this.roomName,
+      gameName: this.gameName,
+      hasPassword: this.password != null && this.password.length > 0,
+      currentPlayerCount: this.playerManager.getPlayerCount(),
+    }
   }
 }

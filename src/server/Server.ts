@@ -3,10 +3,10 @@ import cors from "cors";
 import * as http from "http";
 import { Message } from "./models/message";
 import { Parser } from "./parser/parser";
-import { CreateRoomModel, JoinRoomModel } from "./models/RoomModels";
+import { CreateRoomModel, JoinRoomModel, ListRoomModel } from "./models/RoomModels";
 import CONSTANTS from "../common/CONSTANTS";
 import { RoomManager } from "./room/roomManager";
-import { PlayMoveModel, StartGameModel } from "./models/gameActionsModel";
+import { PlayMoveModel, RequestPlayerSyncModel, StartGameModel, SyncPlayerModel } from "./models/gameActionsModel";
 import { Room } from "./room/room";
 
 export class Server {
@@ -32,7 +32,7 @@ export class Server {
   private createApp(): void {
     this.app = express();
     this.app.use(cors());
-    this.app.get('/', (req, res) => res.sendFile(__dirname + '../ui/public/index.html'));
+    this.app.get('/', (req, res) => res.sendFile('App.js', {'root': __dirname + '/../ui/src/'}));
   }
 
   private createServer(): void {
@@ -56,7 +56,13 @@ export class Server {
       console.log("Connected client on port %s.", this.port);
       
       socket.on("message", (msg: any) => {
-        this.handleMessage(msg, socket);
+        try {
+          this.handleMessage(new Message(msg), socket);
+        }
+        catch (e) {
+          console.debug(e);
+          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, (new Message()).toError(e).toJson());
+        }
       })
 
       socket.on("disconnect", () => {
@@ -65,41 +71,14 @@ export class Server {
     });
   }
 
-  private handleMessage(msg: any, socket: any): any{
+  private handleMessage(msg: Message, socket: any): any {
     try {
-      let selectedRoom = this.roomManager.getRoomBySocket(socket);
-      let parsedMessage = this.parser.parseMessage(new Message(msg));
-      
-      //create room
-      if (parsedMessage.getType() == CreateRoomModel.name) {
-        if (!this.roomManager.createRoom(parsedMessage as CreateRoomModel, socket)) {
-          socket.emit(CONSTANTS.MSG_TYPES.ALREADY_JOINED_ROOM);
-        }
-      }
-      //join room
-      else if (parsedMessage.getType() == JoinRoomModel.name) {
-        if (!this.roomManager.joinRoom(parsedMessage as JoinRoomModel, socket)) {
-          socket.emit(CONSTANTS.MSG_TYPES.ROOM_NOT_JOINED);
-        }
-      }
-      //start game
-      else if (parsedMessage.getType() == StartGameModel.name) {
-        if (!selectedRoom || (<Room>selectedRoom).hasGameStarted) {
-          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
-        }
-        if (!(<Room>selectedRoom).startGame()) {
-          socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
-        }
-      }
-      //play move
-      else if (parsedMessage.getType() == PlayMoveModel.name) {
-        
-      }
-
-      socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, {});
+      let parsedMessage = this.parser.parseMessage(msg);
+      this.roomManager.handleIncomingRoomMessage(parsedMessage, socket);
+      socket.emit(CONSTANTS.CLIENT_MSG.ACKNOWLEDGED, msg.toSuccess().toJson());
     } catch (e) {
-      console.log(e);
-      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, {});
+      console.debug(e);
+      socket.emit(CONSTANTS.CLIENT_MSG.GENERIC_ERROR, msg.toError(e).toJson());
     }
   }
 
